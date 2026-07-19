@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!storgi html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -85,7 +85,7 @@ tr:hover td{background:rgba(255,255,255,.018)}
 .b-red{background:rgba(156,91,84,0.2);color:var(--southwestpottery);border:1px solid var(--southwestpottery)}
 .b-grey{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 .empty{text-align:center;color:var(--text3);padding:2rem;font-size:13px}
-hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;opacity:0.5}
 
 /* delivery product row — 6 cols + remove btn */
 .del-prod-row{display:grid;grid-template-columns:1fr 90px 80px 130px 90px 130px auto;gap:8px;align-items:end;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px}
@@ -325,11 +325,6 @@ select.unit-inp{
 }
 .card,.recipe-card,.pc-card,.del-log-card,.company-card,.seg-inline-card{
   position:relative;
-}
-.card::before,.recipe-card::before,.pc-card::before,.del-log-card::before,.company-card::before{
-  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity:.3;z-index:0;
 }
 /* refined scrollbar */
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -1427,7 +1422,7 @@ function buildPsAddForm(ci, ri, si, prefill=null) {
   const psiAttr = isEdit ? prefill.psi : -1;
   const ingRowsHtml = ps ? (ps.ingredients||[]).map(ing => buildIngRow(ing)).join('') : '';
   return `
-  <div style="padding:12px 14px;border-top:2px solid var(--narragansett)">
+  <div style="padding:12px 14px;border-top:1px solid var(--border2)">
     <div style="margin-bottom:12px">
       <label style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block">Pre-save name</label>
       <input id="psf-name-${ci}-${ri}-${si}" value="${ps&&ps.name?ps.name:''}" placeholder='e.g. "1 tart" or "20×20 batch"'
@@ -1767,8 +1762,7 @@ function renderNewPreSave(c, editing=false) {
     <div id="ps-ing-rows">${ingRowsHtml}</div>
     <button class="btn btn-sm" style="margin-bottom:14px" onclick="addPsIngRow()">
       <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add ingredient</button>
-    <hr>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
       <button class="btn btn-sm" onclick="rcGo('recipes',${catIdx})">Cancel</button>
       <button class="btn btn-blue btn-sm" onclick="savePreSaveForm(${editing?'true':'false'})">
         <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" rx="1"/><rect x="3" y="1" width="4" height="3" fill="currentColor"/><rect x="3" y="7" width="6" height="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span> Save pre-save</button>
