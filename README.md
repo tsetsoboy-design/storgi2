@@ -1,1 +1,2220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Manager</title>
+<style>
+:root{
+  color-scheme: dark;
+  --silhouette:#5c5250;
+  --raindance:#a3b3a8;
+  --swisscoffee:#ece8dc;
+  --firstcrush:#e3dac9;
+  --batik:#cbb4b3;
+  --narragansett:#3f4f53;
+  --southwestpottery:#9c5b54;
+  --sherwoodtan:#b89a76;
+
+  --bg:#191714;
+  --bg2:#222019;
+  --bg3:#2c2820;
+  --bg4:#363028;
+  --border:#3d3529;
+  --border2:#544a3e;
+  --text:#ede9de;
+  --text2:#c4b49e;
+  --text3:#7d6e5f;
+
+  --blue:#a3b3a8;
+  --blue-bg:#252e2a;
+  --blue-border:#3d5048;
+
+  --green:#a3b3a8;
+  --green-bg:#222e27;
+  --green-border:#3d5545;
+
+  --red:#b87870;
+  --red-bg:#2e1e1c;
+  --red-border:#5c3430;
+
+  --amber:#c4a882;
+  --amber-bg:#2e2518;
+  --amber-border:#5c4a2c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--text);padding:1.5rem;min-height:100vh;-webkit-font-smoothing:antialiased}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:1.75rem;flex-wrap:wrap;padding-bottom:12px}
+.tab{padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;border-radius:99px;background:none;color:var(--text3);transition:all .2s;white-space:nowrap;letter-spacing:.02em}
+.tab:hover{color:var(--text2);background:var(--bg3);border-color:var(--border)}
+.tab.active{color:var(--swisscoffee);background:var(--silhouette);border-color:var(--silhouette)}
+.pane{display:none}.pane.active{display:block}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.125rem 1.25rem;margin-bottom:1rem}
+.card-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.875rem}
+label{font-size:11px;color:var(--text3);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+input,select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:10px;font-size:13px;background:var(--bg3);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit}
+input:focus,select:focus{border-color:var(--sherwoodtan);box-shadow:0 0 0 3px rgba(184,154,118,0.12)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--bg3)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;align-items:end}
+.btn{padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border-radius:99px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;letter-spacing:.01em}
+.btn:hover{background:var(--bg4)}
+.btn-blue{background:var(--narragansett);color:var(--swisscoffee);border-color:var(--narragansett)}
+.btn-blue:hover{background:#2e3b3f;box-shadow:0 2px 8px rgba(63,79,83,0.3)}
+.btn-green{background:var(--silhouette);color:var(--swisscoffee);border-color:var(--silhouette);font-weight:600}
+.btn-green:hover{background:#6a605c;box-shadow:0 2px 8px rgba(92,82,80,0.3)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.icon-btn{background:none;border:none;cursor:pointer;padding:5px 7px;border-radius:8px;font-size:14px;color:var(--text3);transition:all .2s;display:inline-flex;align-items:center}
+.icon-btn:hover.del{color:var(--red);background:var(--red-bg)}
+.icon-btn:hover.edit{color:var(--blue);background:var(--blue-bg)}
+.icon-btn:hover.move{color:var(--blue);background:var(--blue-bg)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;color:var(--text3);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:8px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.018)}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.02em}
+.b-blue{background:rgba(63,79,83,0.3);color:var(--raindance);border:1px solid var(--narragansett)}
+.b-green{background:rgba(163,179,168,0.15);color:var(--raindance);border:1px solid var(--raindance)}
+.b-amber{background:rgba(184,154,118,0.2);color:var(--sherwoodtan);border:1px solid var(--sherwoodtan)}
+.b-red{background:rgba(156,91,84,0.2);color:var(--southwestpottery);border:1px solid var(--southwestpottery)}
+.b-grey{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+.empty{text-align:center;color:var(--text3);padding:2rem;font-size:13px}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0;opacity:0.5}
+
+/* delivery product row — 6 cols + remove btn */
+.del-prod-row{display:grid;grid-template-columns:1fr 90px 80px 130px 90px 130px auto;gap:8px;align-items:end;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.price-incl-display{font-size:14px;font-weight:700;color:var(--raindance);padding:8px 0;min-height:36px}
+
+/* delivery log */
+.del-log-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:.875rem;overflow:hidden}
+.del-log-head{padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.del-log-body{padding:12px 16px;display:none}
+.del-log-body.open{display:block}
+
+/* storage */
+.storage-row{display:grid;grid-template-columns:1fr 130px 120px 110px 130px;gap:0;align-items:center;border-bottom:1px solid var(--border);background:var(--bg2);transition:background .2s}
+.storage-row:hover{background:var(--bg3)}
+.storage-row:last-child{border-bottom:none}
+.storage-row.priority{border-left:3px solid var(--sherwoodtan)}
+.sr-cell{padding:9px 10px;font-size:13px;min-width:0;overflow:hidden}
+.sr-move{display:flex;flex-direction:column;gap:1px}
+.min-inp{width:68px;padding:5px 8px;font-size:12px;text-align:right;background:var(--bg3);border:1px solid var(--border2);border-radius:6px 0 0 6px;color:var(--text)}
+.qty-inp-storage{width:72px;padding:5px 8px;font-size:12px;text-align:right;background:var(--bg3);border:1px solid var(--border2);border-radius:6px 0 0 6px;color:var(--text)}
+.sr-cell-avail,.sr-cell-min{text-align:left;padding:8px 10px}
+.sr-control{display:inline-flex;align-items:stretch;max-width:100%}
+.sr-control input{border-right:none;border-radius:6px 0 0 6px;text-align:right}
+.sr-unit{display:inline-flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:var(--text2);background:var(--bg4);border:1px solid var(--border2);border-left:none;border-radius:0 6px 6px 0;white-space:nowrap}
+.m-lbl{display:none}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* recipe */
+.ing-row{display:grid;grid-template-columns:1fr 1fr 90px 90px auto;gap:8px;align-items:end;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.recipe-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:1rem;overflow:hidden;transition:box-shadow .2s}
+.recipe-head{padding:14px 18px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.recipe-title{font-size:15px;font-weight:600;font-family:'Inter',sans-serif;letter-spacing:.01em}
+.recipe-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.recipe-body{padding:12px 16px}.recipe-body.collapsed{display:none}.scale-bar.collapsed{display:none}
+.scale-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;background:rgba(63,79,83,0.15);border-top:1px solid rgba(63,79,83,0.4);flex-wrap:wrap}
+.scale-bar label{color:var(--raindance);font-size:11px;font-weight:600;white-space:nowrap;margin:0;text-transform:none;letter-spacing:0}
+.scale-inp{width:72px;background:var(--bg3);border-color:var(--narragansett);color:var(--raindance);font-weight:700;text-align:center;padding:6px 8px}
+.qty-orig{color:var(--text2);font-size:12px}
+.qty-arrow{color:var(--text3);margin:0 5px;font-size:11px}
+.qty-new{color:var(--blue);font-weight:700}
+
+/* today used */
+.day-group{margin-bottom:1.5rem}
+.day-header{font-size:13px;font-weight:700;color:var(--text2);padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between}
+.day-entries{border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}
+.entry-row{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg2);cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.entry-row:last-child{border-bottom:none}
+.entry-row:hover{background:var(--bg3)}
+.entry-name{font-weight:600;font-size:14px}
+.entry-meta{font-size:12px;color:var(--text2);margin-top:2px}
+.entry-detail{background:var(--bg3);border-bottom:1px solid var(--border);padding:12px 16px;display:none}
+.entry-detail.open{display:block}
+.detail-ing-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
+.detail-ing-row:last-child{border-bottom:none}
+
+
+/* inline edit row for products in suppliers */
+.prod-edit-row{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:7px;padding:8px 10px;margin-bottom:6px;display:grid;grid-template-columns:1fr 100px auto auto;gap:8px;align-items:center}
+
+/* price calculator */
+.pc-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.pc-head{padding:13px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pc-title{font-size:15px;font-weight:700}
+.pc-body.collapsed{display:none}.pc-total-bar.collapsed{display:none}.pc-portions-bar.collapsed{display:none}.pc-body{padding:14px 16px}
+.pc-ing-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pc-ing-row:last-child{border-bottom:none}
+.pc-ing-left{display:flex;align-items:center;gap:8px}
+.pc-price-inp{width:90px;padding:5px 8px;font-size:13px;text-align:right;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text)}
+.pc-price-inp:focus{border-color:var(--blue);outline:none}
+.pc-total-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg3);border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.pc-portions-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(63,79,83,0.25);border-top:1px solid var(--narragansett);flex-wrap:wrap}
+.pc-portions-bar label{color:var(--raindance);font-size:11px;font-weight:600;margin:0;text-transform:none;letter-spacing:0}
+.pc-scale-inp{width:72px;padding:6px 8px;font-size:13px;text-align:center;background:var(--bg3);border:1px solid var(--narragansett);border-radius:6px;color:var(--raindance);font-weight:700}
+
+/* expiration */
+.exp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:.875rem;overflow:hidden;border-left:4px solid var(--border)}
+.exp-card.exp-good{border-left-color:var(--raindance)}
+.exp-card.exp-soon{border-left-color:var(--sherwoodtan)}
+.exp-card.exp-expired{border-left-color:var(--southwestpottery)}
+.exp-row{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.exp-name{font-weight:700;font-size:15px}
+.exp-meta{font-size:12px;color:var(--text2);margin-top:3px}
+.exp-status{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:700}
+.exp-status.exp-good{background:rgba(163,179,168,0.18);color:var(--raindance);border:1px solid var(--raindance)}
+.exp-status.exp-soon{background:rgba(184,154,118,0.2);color:var(--sherwoodtan);border:1px solid var(--sherwoodtan)}
+.exp-status.exp-expired{background:rgba(156,91,84,0.2);color:var(--southwestpottery);border:1px solid var(--southwestpottery)}
+.exp-dates{display:flex;gap:16px;font-size:12px;color:var(--text2)}
+.exp-dates strong{color:var(--text)}
+
+
+/* ════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ════════════════════════════════════════ */
+@media (max-width: 720px) {
+  body{padding:.6rem .6rem 2.5rem;font-size:13px}
+  h1{font-size:16px}
+  .card{padding:.8rem .85rem;border-radius:12px}
+  .card-title{font-size:10px}
+
+  /* bigger inputs to avoid iOS auto-zoom + easier tapping */
+  input,select{font-size:16px;padding:9px 10px}
+  .btn{padding:9px 13px;font-size:13px}
+  label{font-size:10px}
+
+  /* tabs: horizontal scroll instead of wrapping */
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;gap:2px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{padding:9px 12px;font-size:12px;flex-shrink:0}
+
+  /* generic grids -> single column */
+  .g2,.g3,.g4{grid-template-columns:1fr;gap:10px}
+  .g2 [style*="grid-column"],.g3 [style*="grid-column"],.g4 [style*="grid-column"]{grid-column:1}
+
+  /* ── delivery product rows ── */
+  .del-header-row{display:none}
+  .del-prod-row{grid-template-columns:1fr 1fr;gap:8px 10px;padding:12px}
+  .del-prod-row > div:nth-child(1){grid-column:1/3}  /* product */
+  .del-prod-row > div:nth-child(6){grid-column:1/3}  /* price after tax */
+  .del-prod-row > button{grid-column:1/3;justify-self:end;width:auto}
+  .m-lbl{display:block;font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+
+  /* ── recipe ingredient rows ── */
+  .ing-row{grid-template-columns:1fr 1fr;gap:8px 10px;padding:12px}
+  .ing-row > div:nth-child(1){grid-column:1/3}  /* supplier */
+  .ing-row > div:nth-child(2){grid-column:1/3}  /* product */
+  .ing-row > button{grid-column:1/3;justify-self:end;width:auto}
+
+  /* ── storage rows ── */
+  .storage-header-row{display:none}
+  .storage-row{grid-template-columns:1fr;gap:6px 0;padding:10px 8px}
+  .sr-cell{padding:4px 0}
+  .sr-cell-name{grid-column:1;grid-row:1}
+  .sr-cell-avail,.sr-cell-min,.sr-cell-status,.sr-cell-supplier{
+    grid-column:1/3;display:flex;align-items:center;justify-content:space-between;
+    padding:6px 0;border-top:1px solid var(--border)
+  }
+  .qty-inp-storage,.min-inp{width:80px}
+
+  /* ── recipe / price calc card headers ── */
+  .recipe-head,.pc-head,.del-log-head{flex-wrap:wrap;row-gap:8px}
+  .recipe-title,.pc-title{font-size:14px}
+
+  /* ── scale bar (recipes: portions + made/expires + buttons) ── */
+  .scale-bar{flex-direction:column;align-items:stretch;gap:10px;padding:12px}
+  .scale-bar .scale-inp{width:100%}
+  .scale-bar > div[style*="margin-left:12px"]{margin-left:0!important;width:100%;flex-wrap:wrap;gap:8px 12px}
+  .scale-bar > div[style*="margin-left:12px"] input[type=date]{flex:1;width:auto;min-width:130px}
+  .scale-bar > div[style*="margin-left:auto"]{margin-left:0!important;width:100%;flex-wrap:wrap}
+  .scale-bar > div[style*="margin-left:auto"] .btn{flex:1;min-width:110px}
+
+  /* ── price calculator ── */
+  .pc-col-header{display:none}
+  .pc-ing-row{flex-direction:column;align-items:stretch;gap:8px;padding:10px 0}
+  .pc-ing-left{flex-wrap:wrap;gap:6px;width:100%}
+  .pc-ing-row > div[style*="flex-shrink:0"]{width:100%;justify-content:space-between}
+  .pc-ing-row > div[style*="flex-shrink:0"] > div[style*="align-items:flex-end"]{align-items:flex-start}
+  .pc-price-inp{width:120px}
+  .pc-total-bar{flex-wrap:wrap;gap:12px}
+  .pc-portions-bar{flex-wrap:wrap}
+
+  /* ── delivery totals + log footer ── */
+  #del-totals{padding:12px}
+  .del-totals-footer{flex-wrap:wrap;gap:10px!important;justify-content:space-between!important}
+
+  /* ── expiration ── */
+  .exp-row{flex-wrap:wrap;gap:10px}
+  .exp-dates{flex-wrap:wrap;gap:8px 14px}
+  .exp-name{font-size:14px}
+
+  /* ── metrics / misc grids ── */
+  .del-prod-row .price-incl-display{padding:9px 10px;background:var(--bg4);border-radius:7px;text-align:center}
+}
+
+
+/* ── geometric icon shapes (replacing emoji) ── */
+.ic{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic svg{display:block}
+.ic-square{width:14px;height:14px;border:2px solid currentColor;border-radius:3px}
+.ic-circle{width:14px;height:14px;border:2px solid currentColor;border-radius:50%}
+.ic-triangle{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid currentColor}
+.ic-diamond{width:11px;height:11px;border:2px solid currentColor;transform:rotate(45deg)}
+.ic-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+
+
+/* companies */
+.company-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.125rem;margin-bottom:.875rem}
+.company-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.company-name{font-size:15px;font-weight:700}
+.company-detail-row{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:13px;color:var(--text2)}
+.company-detail-row strong{color:var(--text);min-width:80px;flex-shrink:0;font-weight:600}
+.company-empty-field{color:var(--text3);font-style:italic}
+
+/* segment inline cards + pre-save chips */
+.seg-inline-card{background:var(--bg3);border:1px solid var(--border);border-radius:9px;margin-bottom:8px;overflow:hidden}
+.seg-inline-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border)}
+.ps-chips-row{display:flex;gap:8px;padding:10px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap}
+.ps-chips-row::-webkit-scrollbar{display:none}
+.ps-chip{flex-shrink:0;padding:7px 16px;border-radius:99px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;letter-spacing:.01em}
+.ps-chip:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+.ps-chip.ps-chip-active{background:var(--silhouette);color:var(--swisscoffee);border-color:var(--silhouette);box-shadow:0 2px 8px rgba(92,82,80,0.25)}
+.ps-chip-add{background:transparent;border-color:var(--border2);color:var(--text3);padding:7px 12px;font-size:15px;font-weight:400;line-height:1}
+.ps-chip-add:hover{background:var(--bg3);color:var(--text);border-color:var(--sherwoodtan)}
+.ps-chip-add.ps-chip-active{background:var(--bg3);color:var(--sherwoodtan);border-color:var(--sherwoodtan)}
+.ps-inline-panel{border-top:1px solid var(--border);background:var(--bg3);border-radius:0 0 9px 9px}
+.ps-action-bar{display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;background:var(--bg4);border-radius:8px;flex-wrap:wrap}
+
+/* date input styling */
+input[type=date]{cursor:pointer;color-scheme:dark}
+input[type=date]::-webkit-calendar-picker-indicator{
+  filter:invert(0.6) sepia(0.3) hue-rotate(340deg) saturate(0.8);
+  cursor:pointer;opacity:0.7;border-radius:4px;padding:2px;
+}
+input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1}
+
+/* remove number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+
+/* modern select — custom arrow, pill feel */
+select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237d6e5f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  padding-right:28px!important;
+  cursor:pointer;
+}
+select:focus{background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b89a76' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+
+/* unit-inp select (in recipe ingredient rows) — compact pill */
+select.unit-inp{
+  width:auto;min-width:70px;padding:7px 28px 7px 12px!important;
+  border-radius:99px;font-weight:500;font-size:12px;
+  background-color:var(--bg4);border-color:var(--border);
+  color:var(--text2);letter-spacing:.01em;
+}
+.card,.recipe-card,.pc-card,.del-log-card,.company-card,.seg-inline-card{
+  position:relative;
+}
+/* refined scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+/* table refinements */
+th{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.08em}
+td{font-family:'Inter',sans-serif}
+</style>
+</head>
+<body>
+
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem">
+  <span style="font-size:22px"><span class="ic"><svg width="22" height="22" viewBox="0 0 22 22"><rect x="2" y="2" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" rx="3"/><line x1="2" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="2"/><line x1="8" y1="8" x2="8" y2="20" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="14" r="1.6" fill="currentColor"/><circle cx="14" cy="17" r="1.6" fill="currentColor"/></svg></span></span>
+  <h1 style="font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;letter-spacing:.01em;color:var(--swisscoffee)">Kitchen Manager</h1>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="go('suppliers',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="2"/><line x1="1" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6"/></svg></span> Suppliers</button>
+  <button class="tab" onclick="go('delivery',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="3" width="8" height="7" fill="none" stroke="currentColor" stroke-width="1.6" rx="1"/><polygon points="9,5 13,5 13,8 9,8" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="4" cy="11.5" r="1.3" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1.3" fill="currentColor"/></svg></span> Delivery</button>
+  <button class="tab" onclick="go('storage',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><polygon points="7,1 13,4.5 13,9.5 7,13 1,9.5 1,4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="1" y1="4.5" x2="7" y2="8" stroke="currentColor" stroke-width="1.6"/><line x1="13" y1="4.5" x2="7" y2="8" stroke="currentColor" stroke-width="1.6"/><line x1="7" y1="8" x2="7" y2="13" stroke="currentColor" stroke-width="1.6"/></svg></span> Storage</button>
+  <button class="tab" onclick="go('recipes',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="2" y="1" width="10" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="1"/><line x1="4.5" y1="4.5" x2="9.5" y2="4.5" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" stroke-width="1.4"/><line x1="4.5" y1="9.5" x2="8" y2="9.5" stroke="currentColor" stroke-width="1.4"/></svg></span> Recipes</button>
+  <button class="tab" onclick="go('today',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="11" fill="none" stroke="currentColor" stroke-width="1.6" rx="1.5"/><line x1="1" y1="5.5" x2="13" y2="5.5" stroke="currentColor" stroke-width="1.6"/><line x1="4" y1="1" x2="4" y2="3" stroke="currentColor" stroke-width="1.6"/><line x1="10" y1="1" x2="10" y2="3" stroke="currentColor" stroke-width="1.6"/></svg></span> Today Used</button>
+  <button class="tab" onclick="go('price',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="2"/><line x1="4" y1="4.5" x2="10" y2="4.5" stroke="currentColor" stroke-width="1.4"/><line x1="4" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1.4"/><line x1="4" y1="9.5" x2="7" y2="9.5" stroke="currentColor" stroke-width="1.4"/></svg></span> Price Calculator</button>
+
+  <button class="tab" onclick="go('leftovers',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="9" fill="none" stroke="currentColor" stroke-width="1.6" rx="1.5"/><path d="M4 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="4" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1.4"/></svg></span> Leftovers</button>
+  <button class="tab" onclick="go('companies',this)"><span class="ic"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="2" width="12" height="11" fill="none" stroke="currentColor" stroke-width="1.6" rx="1"/><line x1="4" y1="5" x2="10" y2="5" stroke="currentColor" stroke-width="1.4"/><line x1="4" y1="7.5" x2="10" y2="7.5" stroke="currentColor" stroke-width="1.4"/><line x1="4" y1="10" x2="7.5" y2="10" stroke="currentColor" stroke-width="1.4"/></svg></span> Companies</button>
+</div>
+
+<!-- SUPPLIERS -->
+<div class="pane active" id="pane-suppliers">
+  <div class="card">
+    <div class="card-title">Add supplier</div>
+    <div class="g3">
+      <div style="grid-column:1/3">
+        <label>Company name</label>
+        <input id="s-name" list="company-names-list" placeholder="Type or pick a saved company">
+        <datalist id="company-names-list"></datalist>
+      </div>
+      <div style="padding-bottom:1px"><button class="btn btn-blue" onclick="addSupplier()" style="width:100%"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add supplier</button></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px">Start typing to see saved companies, or add a new name. Manage full company details (phone, address, notes) in the Companies tab.</div>
+  </div>
+  <div id="suppliers-list"></div>
+</div>
+
+<!-- COMPANIES -->
+<div class="pane" id="pane-companies">
+  <div class="card" id="company-form-card">
+    <div class="card-title" id="company-form-label">Add company</div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label>Company name</label><input id="c-name" placeholder="e.g. Metro Cash & Carry"></div>
+      <div><label>Phone number</label><input id="c-phone" placeholder="e.g. +359 888 000 000"></div>
+    </div>
+    <div style="margin-bottom:10px"><label>Address</label><input id="c-address" placeholder="e.g. 12 Market St, Sofia"></div>
+    <div style="margin-bottom:10px"><label>Email</label><input id="c-email" type="email" placeholder="e.g. orders@metro.com"></div>
+    <div style="margin-bottom:10px"><label>Notes</label><input id="c-notes" placeholder="e.g. delivers Mon/Thu, contact Maria for orders"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm" id="company-cancel-btn" style="display:none" onclick="cancelEditCompany()"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span> Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="saveCompany()"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" rx="1"/><rect x="3" y="1" width="4" height="3" fill="currentColor"/><rect x="3" y="7" width="6" height="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span> Save company</button>
+    </div>
+  </div>
+  <div id="companies-list"></div>
+</div>
+
+<!-- DELIVERY -->
+<div class="pane" id="pane-delivery">
+  <div class="card">
+    <div class="card-title">New delivery</div>
+    <div class="g4" style="margin-bottom:12px">
+      <div>
+        <label>Supplier</label>
+        <select id="del-supplier" onchange="onDelSupplierChange()">
+          <option value="">— select supplier —</option>
+        </select>
+      </div>
+      <div><label>Delivery date</label><input type="date" id="del-date"></div>
+      <div><label>Document / invoice no.</label><input id="del-docno" placeholder="e.g. INV-2024-001"></div>
+      <div>
+        <label>Default VAT %</label>
+        <select id="del-vat-default" class="unit-inp" onchange="applyDefaultVat()">
+          <option value="0">0%</option><option value="9">9%</option>
+          <option value="20" selected>20%</option><option value="23">23%</option><option value="25">25%</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-title" style="margin-bottom:6px">Products in this delivery</div>
+    <!-- column headers -->
+    <div class="del-header-row" style="display:grid;grid-template-columns:1fr 90px 80px 130px 90px 130px auto;gap:8px;padding:0 14px;margin-bottom:4px">
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Product</span>
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Qty</span>
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Unit</span>
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Price/unit (fixed)</span>
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">VAT %</span>
+      <span style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Price/unit after tax</span>
+      <span></span>
+    </div>
+    <div id="del-prod-rows"></div>
+    <button class="btn btn-sm" id="del-add-prod-btn" onclick="addDelProdRow()" style="margin-bottom:14px;display:none"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add product</button>
+    <div id="del-no-supplier" style="font-size:13px;color:var(--text3);margin-bottom:14px"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="10" y1="6" x2="2" y2="6" stroke="currentColor" stroke-width="1.8"/><path d="M5 2L2 6l3 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Select a supplier first.</div>
+    <!-- totals -->
+    <div id="del-totals" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span style="color:var(--text2)">Total before tax</span><span id="tot-excl" style="font-weight:600">€0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+        <span style="color:var(--text2)">Tax amount</span><span id="tot-tax" style="font-weight:600;color:var(--sherwoodtan)">€0.00</span>
+      </div>
+      <hr style="margin:8px 0">
+      <div style="display:flex;justify-content:space-between;font-size:15px">
+        <span style="font-weight:600">Total after tax</span><span id="tot-incl" style="font-weight:700;color:var(--raindance)">€0.00</span>
+      </div>
+    </div>
+    <hr>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm" onclick="clearDeliveryForm()">Clear</button>
+      <button class="btn btn-green btn-sm" id="save-del-btn" onclick="saveDelivery()"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Save delivery & update storage</button>
+    </div>
+  </div>
+  <div class="card-title" style="margin-top:.25rem">Delivery history</div>
+  <div id="delivery-log"></div>
+</div>
+
+<!-- STORAGE -->
+<div class="pane" id="pane-storage">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="storage-header-row" style="display:grid;grid-template-columns:1fr 130px 120px 110px 130px;gap:0;border-bottom:1px solid var(--border);padding:8px 10px;background:var(--bg3)">
+      <div class="card-title" style="margin:0;font-size:10px">Product (tap star for priority)</div>
+      <div class="card-title" style="margin:0;font-size:10px;text-align:center">Available</div>
+      <div class="card-title" style="margin:0;font-size:10px;text-align:center">Min qty</div>
+      <div class="card-title" style="margin:0;font-size:10px">Status</div>
+      <div class="card-title" style="margin:0;font-size:10px">Supplier</div>
+    </div>
+    <div id="storage-list"></div>
+  </div>
+  <div style="font-size:12px;color:var(--text3);margin-top:4px"><span class="ic"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="6" r="4" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="5.5" y1="11" x2="8.5" y2="11" stroke="currentColor" stroke-width="1.4"/><line x1="6" y1="12.5" x2="8" y2="12.5" stroke="currentColor" stroke-width="1.4"/></svg></span> Set Min qty thresholds. Deliveries update Available automatically. Use the arrows to reorder.</div>
+</div>
+
+<!-- RECIPES -->
+<div class="pane" id="pane-recipes">
+  <div id="recipe-nav"></div>
+  <div id="recipe-content"></div>
+</div>
+
+<!-- TODAY USED -->
+<div class="pane" id="pane-today">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:160px"><label>View date</label><input type="date" id="view-date" oninput="onDateChange()"></div>
+      <div style="font-size:13px;color:var(--text2)" id="day-summary"></div>
+    </div>
+  </div>
+
+  <div id="today-entries"></div>
+</div>
+
+<!-- PRICE CALCULATOR -->
+<div class="pane" id="pane-price">
+  <div id="price-calc-list"></div>
+</div>
+
+<!-- LEFTOVERS -->
+<div class="pane" id="pane-leftovers">
+  <div class="card" style="margin-bottom:.75rem">
+    <input id="leftover-search" placeholder="Search leftovers..." oninput="renderLeftovers()"
+      style="width:100%;font-size:14px">
+  </div>
+  <div id="leftovers-list"></div>
+</div>
+
+<script>
+let suppliers  = [];
+let recipes    = [];
+let categories = [];
+let usedLog    = [];
+let storage    = [];
+let deliveries = [];
+let companies  = [];
+let leftovers  = [];
+let editingRecipe   = -1;
+let editingDelivery = -1; // index of delivery being edited
+let editingCompany  = -1;
+let rowIdx    = 0;
+let delRowIdx = 0;
+
+try { suppliers  = JSON.parse(localStorage.getItem('km_sup') || '[]'); } catch(e){}
+try { recipes    = JSON.parse(localStorage.getItem('km_rec') || '[]'); } catch(e){}
+try { categories = JSON.parse(localStorage.getItem('km_cat') || '[]'); } catch(e){}
+try { usedLog    = JSON.parse(localStorage.getItem('km_log') || '[]'); } catch(e){}
+try { storage    = JSON.parse(localStorage.getItem('km_sto') || '[]'); } catch(e){}
+try { deliveries = JSON.parse(localStorage.getItem('km_del') || '[]'); } catch(e){}
+try { companies  = JSON.parse(localStorage.getItem('km_com') || '[]'); } catch(e){}
+try { leftovers  = JSON.parse(localStorage.getItem('km_lft') || '[]'); } catch(e){}
+
+function persist() {
+  localStorage.setItem('km_sup',  JSON.stringify(suppliers));
+  localStorage.setItem('km_rec',  JSON.stringify(recipes));
+  localStorage.setItem('km_cat',  JSON.stringify(categories));
+  localStorage.setItem('km_log',  JSON.stringify(usedLog));
+  localStorage.setItem('km_sto',  JSON.stringify(storage));
+  localStorage.setItem('km_del',  JSON.stringify(deliveries));
+  localStorage.setItem('km_com',  JSON.stringify(companies));
+  localStorage.setItem('km_lft',  JSON.stringify(leftovers));
+}
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) { return new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'}); }
+function fmtMoney(n) { return '€'+parseFloat(n||0).toFixed(2); }
+
+/* ── sync storage from suppliers ── */
+function syncStorage() {
+  suppliers.forEach(s => s.products.forEach(p => {
+    const key = s.name+'::'+p.name;
+    if (!storage.find(x => x.key===key))
+      storage.push({key, supName:s.name, prodName:p.name, unit:p.unit, qty:0, minQty:0, priority:false});
+  }));
+  // remove products no longer in any supplier
+  storage = storage.filter(x => {
+    const s = suppliers.find(s => s.name===x.supName);
+    return s && s.products.find(p => p.name===x.prodName);
+  });
+  // sync unit changes
+  storage.forEach(x => {
+    const s = suppliers.find(s => s.name===x.supName);
+    if (!s) return;
+    const p = s.products.find(p => p.name===x.prodName);
+    if (p) x.unit = p.unit;
+  });
+  persist();
+}
+
+/* ── status ── */
+function getStatus(item) {
+  if (item.minQty<=0) return 'grey';
+  if (item.qty<=0 || item.qty<item.minQty) return 'red';
+  if (item.qty<item.minQty*1.5) return 'amber';
+  return 'green';
+}
+function statusBadge(item) {
+  const map = {green:['b-green','<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Good'],amber:['b-amber','<span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><path d="M7 1.5l6 10.5H1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><line x1="7" y1="5.5" x2="7" y2="8.5" stroke="currentColor" stroke-width="1.4"/><circle cx="7" cy="10.5" r="0.6" fill="currentColor"/></svg></span> Medium'],red:['b-red','<span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span> Low'],grey:['b-grey','— No min']};
+  const [cls,lbl] = map[getStatus(item)];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function getStorageItem(supName,prodName) { return storage.find(x=>x.supName===supName&&x.prodName===prodName)||null; }
+// Convert a quantity from one unit to another (used whenever recipe units and storage units differ)
+function convertUnits(qty, fromUnit, toUnit) {
+  if (fromUnit === toUnit) return qty;
+  if (fromUnit === 'g'  && toUnit === 'kg')  return qty / 1000;
+  if (fromUnit === 'kg' && toUnit === 'g')   return qty * 1000;
+  if (fromUnit === 'ml' && toUnit === 'L')   return qty / 1000;
+  if (fromUnit === 'L'  && toUnit === 'ml')  return qty * 1000;
+  // same scale — pass through unchanged (pcs, box, bag)
+  return qty;
+}
+function availBadge(supName,prodName,needed,recipeUnit) {
+  const item = getStorageItem(supName,prodName);
+  if (!item) return '<span class="badge b-grey">—</span>';
+  if (needed!==undefined) {
+    // convert the needed qty from recipe unit to storage unit for comparison
+    const neededInStorageUnit = recipeUnit ? convertUnits(needed, recipeUnit, item.unit) : needed;
+    const avail = item.qty;
+    const availDisplay = avail.toFixed(2) + ' ' + item.unit;
+    if (avail<=0||avail<neededInStorageUnit) return `<span class="badge b-red"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span> Low (${availDisplay})</span>`;
+    if (avail<neededInStorageUnit*1.5) return `<span class="badge b-amber"><span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><path d="M7 1.5l6 10.5H1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><line x1="7" y1="5.5" x2="7" y2="8.5" stroke="currentColor" stroke-width="1.4"/><circle cx="7" cy="10.5" r="0.6" fill="currentColor"/></svg></span> Medium (${availDisplay})</span>`;
+    return `<span class="badge b-green"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Good (${availDisplay})</span>`;
+  }
+  return statusBadge(item);
+}
+
+/* ── tabs ── */
+function go(tab,btn) {
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pane-'+tab).classList.add('active');
+  ({suppliers:renderSuppliers,delivery:initDeliveryTab,storage:()=>{syncStorage();renderStorage();},recipes:renderRecipes,today:initTodayTab,price:renderPriceCalc,leftovers:renderLeftovers,companies:renderCompanies})[tab]?.();
+}
+
+/* ══ SUPPLIERS ══ */
+function addSupplier() {
+  const name = document.getElementById('s-name').value.trim();
+  if (!name) { alert('Enter a company name.'); return; }
+  if (suppliers.find(s=>s.name.toLowerCase()===name.toLowerCase())) { alert('Already exists.'); return; }
+  suppliers.push({name,products:[]});
+  // auto-create a bare company record if this name doesn't exist yet in Companies
+  if (!companies.find(c=>c.name.toLowerCase()===name.toLowerCase())) {
+    companies.push({name, phone:'', address:'', email:'', notes:''});
+  }
+  persist();
+  document.getElementById('s-name').value='';
+  renderSuppliers();
+}
+function deleteSupplier(i) {
+  if (!confirm('Delete "'+suppliers[i].name+'"?')) return;
+  suppliers.splice(i,1); syncStorage(); renderSuppliers();
+}
+function addProduct(si) {
+  const nameEl=document.getElementById('pname-'+si), unitEl=document.getElementById('punit-'+si);
+  const name=nameEl.value.trim(), unit=unitEl.value;
+  if (!name||!unit) { alert('Enter product name and unit.'); return; }
+  if (suppliers[si].products.find(p=>p.name.toLowerCase()===name.toLowerCase())) { alert('Already exists.'); return; }
+  suppliers[si].products.push({name,unit});
+  syncStorage(); nameEl.value=''; unitEl.value='';
+  renderSuppliers();
+}
+function deleteProduct(si,pi) {
+  suppliers[si].products.splice(pi,1); syncStorage(); renderSuppliers();
+}
+
+/* ══ COMPANIES ══ */
+function saveCompany() {
+  const name    = document.getElementById('c-name').value.trim();
+  const phone   = document.getElementById('c-phone').value.trim();
+  const address = document.getElementById('c-address').value.trim();
+  const email   = document.getElementById('c-email').value.trim();
+  const notes   = document.getElementById('c-notes').value.trim();
+  if (!name) { alert('Enter a company name.'); return; }
+
+  if (editingCompany >= 0) {
+    const oldName = companies[editingCompany].name;
+    companies[editingCompany] = { name, phone, address, email, notes };
+    // keep linked supplier name in sync if it changed
+    if (oldName !== name) {
+      const sup = suppliers.find(s => s.name === oldName);
+      if (sup) sup.name = name;
+      deliveries.forEach(d => { if (d.supName === oldName) d.supName = name; });
+      storage.forEach(s => { if (s.supName === oldName) s.supName = name; });
+      recipes.forEach(r => r.ingredients.forEach(ing => { if (ing.supplier === oldName) ing.supplier = name; }));
+    }
+    editingCompany = -1;
+  } else {
+    if (companies.find(c => c.name.toLowerCase() === name.toLowerCase())) { alert('A company with this name already exists.'); return; }
+    companies.push({ name, phone, address, email, notes });
+  }
+  persist();
+  cancelEditCompany();
+  renderCompanies();
+  renderCompanyDatalist();
+}
+function cancelEditCompany() {
+  editingCompany = -1;
+  document.getElementById('c-name').value = '';
+  document.getElementById('c-phone').value = '';
+  document.getElementById('c-address').value = '';
+  document.getElementById('c-email').value = '';
+  document.getElementById('c-notes').value = '';
+  document.getElementById('company-form-label').textContent = 'Add company';
+  document.getElementById('company-cancel-btn').style.display = 'none';
+}
+function editCompany(i) {
+  const c = companies[i];
+  editingCompany = i;
+  document.getElementById('c-name').value = c.name;
+  document.getElementById('c-phone').value = c.phone || '';
+  document.getElementById('c-address').value = c.address || '';
+  document.getElementById('c-email').value = c.email || '';
+  document.getElementById('c-notes').value = c.notes || '';
+  document.getElementById('company-form-label').innerHTML = '<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span> Editing: ' + c.name;
+  document.getElementById('company-cancel-btn').style.display = '';
+  document.getElementById('company-form-card').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+function deleteCompany(i) {
+  const c = companies[i];
+  const linkedSupplier = suppliers.find(s => s.name === c.name);
+  const msg = linkedSupplier
+    ? `"${c.name}" is also an active supplier. Delete the company record only? (supplier + its products stay untouched)`
+    : `Delete company "${c.name}"?`;
+  if (!confirm(msg)) return;
+  if (editingCompany === i) cancelEditCompany();
+  companies.splice(i,1);
+  persist();
+  renderCompanies();
+  renderCompanyDatalist();
+}
+function renderCompanies() {
+  const list = document.getElementById('companies-list');
+  if (!companies.length) { list.innerHTML = '<div class="empty">No companies yet. Add one above.</div>'; return; }
+  list.innerHTML = companies.map((c,i) => {
+    const isSupplier = suppliers.some(s => s.name === c.name);
+    return `
+    <div class="company-card">
+      <div class="company-head">
+        <div class="company-name">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="2"/><line x1="1" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6"/></svg></span>
+          ${c.name}
+          ${isSupplier ? '<span class="badge b-green" style="margin-left:8px">Active supplier</span>' : ''}
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn edit" onclick="editCompany(${i})" title="Edit"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+          <button class="icon-btn del" onclick="deleteCompany(${i})" title="Delete"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        </div>
+      </div>
+      <div class="company-detail-row"><strong>Phone</strong> ${c.phone ? c.phone : '<span class="company-empty-field">not set</span>'}</div>
+      <div class="company-detail-row"><strong>Address</strong> ${c.address ? c.address : '<span class="company-empty-field">not set</span>'}</div>
+      <div class="company-detail-row"><strong>Email</strong> ${c.email ? c.email : '<span class="company-empty-field">not set</span>'}</div>
+      <div class="company-detail-row"><strong>Notes</strong> ${c.notes ? c.notes : '<span class="company-empty-field">not set</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* inline edit product */
+function startEditProduct(si,pi) {
+  const p = suppliers[si].products[pi];
+  const rowId = `pedit-${si}-${pi}`;
+  // replace the table row with an inline edit row
+  const tr = document.getElementById(`ptr-${si}-${pi}`);
+  if (!tr) return;
+  const editDiv = document.createElement('tr');
+  editDiv.id = rowId;
+  editDiv.innerHTML = `
+    <td colspan="3" style="padding:6px 8px">
+      <div class="prod-edit-row">
+        <input id="pe-name-${si}-${pi}" value="${p.name}" placeholder="Product name">
+        <select id="pe-unit-${si}-${pi}" class="unit-inp">
+          <option value="kg"${p.unit==='kg'?' selected':''}>kg</option>
+          <option value="g"${p.unit==='g'?' selected':''}>g</option>
+          <option value="L"${p.unit==='L'?' selected':''}>L</option>
+          <option value="ml"${p.unit==='ml'?' selected':''}>ml</option>
+          <option value="pcs"${p.unit==='pcs'?' selected':''}>pcs</option>
+          <option value="box"${p.unit==='box'?' selected':''}>box</option>
+          <option value="bag"${p.unit==='bag'?' selected':''}>bag</option>
+        </select>
+        <button class="btn btn-blue btn-sm" onclick="saveEditProduct(${si},${pi})"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Save</button>
+        <button class="btn btn-sm" onclick="cancelEditProduct(${si},${pi})"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span></button>
+      </div>
+    </td>`;
+  tr.replaceWith(editDiv);
+}
+function saveEditProduct(si,pi) {
+  const newName = document.getElementById(`pe-name-${si}-${pi}`).value.trim();
+  const newUnit = document.getElementById(`pe-unit-${si}-${pi}`).value;
+  if (!newName||!newUnit) { alert('Fill both fields.'); return; }
+  const oldName = suppliers[si].products[pi].name;
+  const oldUnit = suppliers[si].products[pi].unit;
+  suppliers[si].products[pi].name = newName;
+  suppliers[si].products[pi].unit = newUnit;
+  // update storage key + unit
+  const oldKey = suppliers[si].name+'::'+oldName;
+  const newKey = suppliers[si].name+'::'+newName;
+  const stItem = storage.find(x=>x.key===oldKey);
+  if (stItem) { stItem.key=newKey; stItem.prodName=newName; stItem.unit=newUnit; }
+  // update deliveries unit references
+  deliveries.forEach(d => {
+    if (d.supName===suppliers[si].name) {
+      d.items.forEach(it => { if (it.product===oldName) { it.product=newName; it.unit=newUnit; } });
+    }
+  });
+  // update recipes ingredient references
+  recipes.forEach(r => r.ingredients.forEach(ing => {
+    if (ing.supplier===suppliers[si].name && ing.product===oldName) {
+      ing.product=newName; ing.unit=newUnit;
+    }
+  }));
+  // update usedLog
+  usedLog.forEach(u => u.ingredients?.forEach(ing => {
+    if (ing.supplier===suppliers[si].name && ing.product===oldName) { ing.product=newName; ing.unit=newUnit; }
+  }));
+  persist(); renderSuppliers();
+}
+function cancelEditProduct(si,pi) { renderSuppliers(); }
+
+function renderCompanyDatalist() {
+  const dl = document.getElementById('company-names-list');
+  if (!dl) return;
+  dl.innerHTML = companies.map(c => `<option value="${c.name}"></option>`).join('');
+}
+function renderSuppliers() {
+  renderCompanyDatalist();
+  const c = document.getElementById('suppliers-list');
+  if (!suppliers.length) { c.innerHTML='<div class="empty">No suppliers yet.</div>'; return; }
+  c.innerHTML = suppliers.map((s,si)=>`
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px">
+          <span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="2"/><line x1="1" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6"/></svg></span> ${s.name}
+          <span class="badge b-blue">${s.products.length} product${s.products.length!==1?'s':''}</span>
+        </div>
+        <button class="icon-btn del" onclick="deleteSupplier(${si})"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      </div>
+      ${s.products.length?`
+        <div class="table-scroll"><table style="margin-bottom:12px">
+          <thead><tr><th>Product</th><th>Unit</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody>
+            ${s.products.map((p,pi)=>`
+              <tr id="ptr-${si}-${pi}">
+                <td style="font-weight:600">${p.name}</td>
+                <td><span class="badge b-amber">${p.unit}</span></td>
+                <td style="text-align:right;display:flex;gap:4px;justify-content:flex-end">
+                  <button class="icon-btn edit" onclick="startEditProduct(${si},${pi})" title="Edit"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+                  <button class="icon-btn del"  onclick="deleteProduct(${si},${pi})"    title="Delete"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span></button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>`:
+        '<div style="font-size:12px;color:var(--text3);margin-bottom:12px">No products yet.</div>'}
+      <div class="g4">
+        <div style="grid-column:1/3"><label>Product name</label><input id="pname-${si}" placeholder="e.g. Sugar"></div>
+        <div><label>Unit</label>
+          <select id="punit-${si}" class="unit-inp">
+            <option value="">— unit —</option>
+            <option>kg</option><option>g</option><option>L</option><option>ml</option>
+            <option>pcs</option><option>box</option><option>bag</option>
+          </select>
+        </div>
+        <div style="padding-bottom:1px"><button class="btn btn-blue btn-sm" onclick="addProduct(${si})" style="width:100%"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add</button></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ DELIVERY ══ */
+function initDeliveryTab() {
+  const sel = document.getElementById('del-supplier');
+  const cur = sel.value;
+  sel.innerHTML='<option value="">— select supplier —</option>'+
+    suppliers.map(s=>`<option value="${s.name}"${s.name===cur?' selected':''}>${s.name}</option>`).join('');
+  if (!document.getElementById('del-date').value) document.getElementById('del-date').value=todayStr();
+  const hasSup = sel.value!=='';
+  document.getElementById('del-add-prod-btn').style.display = hasSup?'':'none';
+  document.getElementById('del-no-supplier').style.display  = hasSup?'none':'';
+  updateDeliveryTotals();
+  renderDeliveryLog();
+}
+
+function onDelSupplierChange() {
+  const supName = document.getElementById('del-supplier').value;
+  document.getElementById('del-prod-rows').innerHTML='';
+  delRowIdx=0;
+  const hasSup = supName!=='';
+  document.getElementById('del-add-prod-btn').style.display = hasSup?'':'none';
+  document.getElementById('del-no-supplier').style.display  = hasSup?'none':'';
+  document.getElementById('del-totals').style.display='none';
+  if (hasSup) addDelProdRow();
+}
+
+function applyDefaultVat() {
+  const vat=document.getElementById('del-vat-default').value;
+  document.querySelectorAll('.dpr-vat').forEach(sel=>{sel.value=vat;calcDelRow(sel);});
+}
+
+function addDelProdRow(prefill) {
+  const supName = document.getElementById('del-supplier').value;
+  const s = suppliers.find(x=>x.name===supName);
+  if (!s) return;
+  const defaultVat = document.getElementById('del-vat-default').value;
+  const id = 'dpr-'+(delRowIdx++);
+  const div = document.createElement('div');
+  div.className='del-prod-row'; div.id=id;
+  const selProd = prefill?prefill.product:'';
+  const prodOpts = s.products.map(p=>`<option value="${p.name}" data-unit="${p.unit}"${p.name===selProd?' selected':''}>${p.name}</option>`).join('');
+  const firstUnit = prefill ? prefill.unit : (s.products[0]?s.products[0].unit:'');
+  const qty       = prefill ? prefill.qty : '';
+  const priceFixed = prefill && prefill.priceFixed!=null ? prefill.priceFixed : (prefill && prefill.priceExcl!=null ? prefill.priceExcl : '');
+  const vat        = prefill ? prefill.vat : defaultVat;
+  const priceAfter = (priceFixed!=='' && parseFloat(priceFixed)>0) ? '€'+(parseFloat(priceFixed)*(1+parseFloat(vat)/100)).toFixed(3) : '—';
+  div.innerHTML=`
+    <div><label class="m-lbl">Product</label><select class="dpr-prod" onchange="onDelProdChange('${id}',this)">${prodOpts}</select></div>
+    <div><label class="m-lbl">Quantity</label><input type="number" class="dpr-qty" value="${qty}" placeholder="10" min="0.001" step="0.001" oninput="updateDeliveryTotals()"></div>
+    <div><label class="m-lbl">Unit</label><input type="text" class="dpr-unit" value="${firstUnit}" style="text-align:center;background:var(--bg4);color:var(--text2)" readonly></div>
+    <div><label class="m-lbl">Price (€)</label><input type="number" class="dpr-price-fixed" value="${priceFixed}" placeholder="0.000" min="0" step="0.001" oninput="calcDelRow(this)"></div>
+    <div>
+      <label class="m-lbl">VAT %</label>
+      <select class="dpr-vat unit-inp" onchange="calcDelRow(this)">
+        <option value="0"${vat==='0'||vat===0?' selected':''}>0%</option>
+        <option value="9"${vat==='9'||vat===9?' selected':''}>9%</option>
+        <option value="20"${vat==='20'||vat===20?' selected':''}>20%</option>
+        <option value="23"${vat==='23'||vat===23?' selected':''}>23%</option>
+        <option value="25"${vat==='25'||vat===25?' selected':''}>25%</option>
+      </select>
+    </div>
+    <div><label class="m-lbl">Price after tax</label><div class="price-incl-display dpr-price-after">${priceAfter}</div></div>
+    <button class="icon-btn del" onclick="removeDelRow('${id}')" style="margin-bottom:1px"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span> Remove</button>`;
+  document.getElementById('del-prod-rows').appendChild(div);
+  updateDeliveryTotals();
+}
+
+function onDelProdChange(id,sel) {
+  const row=document.getElementById(id);
+  const opt=sel.options[sel.selectedIndex];
+  row.querySelector('.dpr-unit').value=opt.dataset.unit||'';
+  calcDelRow(sel);
+}
+
+function calcDelRow(el) {
+  const row=el.closest('.del-prod-row');
+  const price=parseFloat(row.querySelector('.dpr-price-fixed').value)||0;
+  const vat  =parseFloat(row.querySelector('.dpr-vat').value)||0;
+  const after=price>0?price*(1+vat/100):0;
+  row.querySelector('.dpr-price-after').textContent=after>0?'€'+after.toFixed(3):'—';
+  updateDeliveryTotals();
+}
+
+function removeDelRow(id) { document.getElementById(id)?.remove(); updateDeliveryTotals(); }
+
+function updateDeliveryTotals() {
+  let totalBefore=0,totalAfter=0;
+  document.querySelectorAll('.del-prod-row').forEach(row=>{
+    const price = parseFloat(row.querySelector('.dpr-price-fixed')?.value)||0;
+    const vat   = parseFloat(row.querySelector('.dpr-vat')?.value)||0;
+    totalBefore += price;
+    totalAfter  += price*(1+vat/100);
+  });
+  const totEl=document.getElementById('del-totals');
+  if (totalBefore>0||totalAfter>0) {
+    totEl.style.display='';
+    document.getElementById('tot-excl').textContent=fmtMoney(totalBefore);
+    document.getElementById('tot-tax').textContent =fmtMoney(totalAfter-totalBefore);
+    document.getElementById('tot-incl').textContent=fmtMoney(totalAfter);
+  } else { totEl.style.display='none'; }
+}
+
+function collectDeliveryRows() {
+  const items=[]; let valid=true;
+  document.querySelectorAll('.del-prod-row').forEach(row=>{
+    const product    = row.querySelector('.dpr-prod').value;
+    const qty        = parseFloat(row.querySelector('.dpr-qty').value);
+    const unit       = row.querySelector('.dpr-unit').value;
+    const priceFixed = parseFloat(row.querySelector('.dpr-price-fixed').value);
+    const vat        = parseFloat(row.querySelector('.dpr-vat').value)||0;
+    const priceAfter = !isNaN(priceFixed)&&priceFixed>0 ? parseFloat((priceFixed*(1+vat/100)).toFixed(4)) : null;
+    if (!product||isNaN(qty)||qty<=0) { valid=false; return; }
+    // priceFixed = total price as entered, not multiplied by qty
+    items.push({product,qty,unit,priceFixed:isNaN(priceFixed)?null:priceFixed,vat,priceAfter});
+  });
+  return {items,valid};
+}
+
+function saveDelivery() {
+  const supName = document.getElementById('del-supplier').value;
+  const date    = document.getElementById('del-date').value;
+  const docNo   = document.getElementById('del-docno').value.trim();
+  if (!supName) { alert('Select a supplier.'); return; }
+  if (!date)    { alert('Select a date.'); return; }
+  const rows = document.querySelectorAll('.del-prod-row');
+  if (!rows.length) { alert('Add at least one product.'); return; }
+  const {items,valid} = collectDeliveryRows();
+  if (!valid) { alert('Check all rows — product and quantity are required.'); return; }
+  let totalExcl=0,totalIncl=0;
+  items.forEach(it=>{ if(it.priceFixed){totalExcl+=it.priceFixed;totalIncl+=(it.priceAfter||it.priceFixed);} });
+
+  if (editingDelivery>=0) {
+    // reverse old storage changes
+    const old = deliveries[editingDelivery];
+    old.items.forEach(it=>{
+      const item=getStorageItem(old.supName,it.product);
+      if (item) item.qty=Math.max(0,parseFloat((item.qty-it.qty).toFixed(4)));
+    });
+    deliveries[editingDelivery]={id:old.id,supName,date,docNo,items,totalExcl,totalIncl};
+    editingDelivery=-1;
+    document.getElementById('save-del-btn').innerHTML='<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Save delivery & update storage';
+  } else {
+    deliveries.unshift({id:Date.now(),supName,date,docNo,items,totalExcl,totalIncl});
+  }
+  // apply new storage changes
+  items.forEach(it=>{
+    const item=getStorageItem(supName,it.product);
+    if (!item) return;
+    item.qty=parseFloat((item.qty+it.qty).toFixed(4));
+    if (it.priceAfter) item.lastPriceIncl=it.priceAfter;
+  });
+  persist(); clearDeliveryForm(); renderDeliveryLog();
+  const btn=document.getElementById('save-del-btn');
+  const orig=btn.innerHTML;
+  btn.innerHTML='<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Saved!'; btn.disabled=true;
+  setTimeout(()=>{btn.innerHTML=orig;btn.disabled=false;},2000);
+}
+
+function editDelivery(i) {
+  const d=deliveries[i];
+  editingDelivery=i;
+  // populate header fields
+  const sel=document.getElementById('del-supplier');
+  sel.innerHTML='<option value="">— select supplier —</option>'+
+    suppliers.map(s=>`<option value="${s.name}"${s.name===d.supName?' selected':''}>${s.name}</option>`).join('');
+  document.getElementById('del-date').value=d.date;
+  document.getElementById('del-docno').value=d.docNo||'';
+  // clear and repopulate product rows
+  document.getElementById('del-prod-rows').innerHTML='';
+  delRowIdx=0;
+  document.getElementById('del-add-prod-btn').style.display='';
+  document.getElementById('del-no-supplier').style.display='none';
+  d.items.forEach(it=>addDelProdRow(it));
+  updateDeliveryTotals();
+  document.getElementById('save-del-btn').innerHTML='<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Update delivery';
+  // scroll to form
+  document.querySelector('#pane-delivery .card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function deleteDelivery(i) {
+  if (!confirm('Delete this delivery? Storage quantities will NOT be reversed automatically.')) return;
+  if (editingDelivery===i) { clearDeliveryForm(); editingDelivery=-1; }
+  deliveries.splice(i,1); persist(); renderDeliveryLog();
+}
+
+function clearDeliveryForm() {
+  editingDelivery=-1;
+  document.getElementById('del-supplier').value='';
+  document.getElementById('del-date').value=todayStr();
+  document.getElementById('del-docno').value='';
+  document.getElementById('del-prod-rows').innerHTML='';
+  document.getElementById('del-totals').style.display='none';
+  document.getElementById('del-add-prod-btn').style.display='none';
+  document.getElementById('del-no-supplier').style.display='';
+  document.getElementById('save-del-btn').innerHTML='<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Save delivery & update storage';
+}
+
+function toggleDelLog(id) {
+  const body=document.getElementById('dlb-'+id),chev=document.getElementById('dlc-'+id);
+  if (!body) return;
+  const open=body.classList.toggle('open');
+  if (chev) chev.style.transform=open?'rotate(90deg)':'';
+}
+
+function renderDeliveryLog() {
+  const container=document.getElementById('delivery-log');
+  if (!deliveries.length){container.innerHTML='<div class="empty">No deliveries yet.</div>';return;}
+  container.innerHTML=deliveries.map((d,i)=>`
+    <div class="del-log-card">
+      <div class="del-log-head" onclick="toggleDelLog(${d.id})">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-weight:700;font-size:14px"><span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" rx="2"/><line x1="1" y1="5" x2="13" y2="5" stroke="currentColor" stroke-width="1.6"/></svg></span> ${d.supName}</span>
+          <span class="badge b-blue">${fmtDate(d.date)}</span>
+          ${d.docNo?`<span class="badge b-grey"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M2 1h5l3 3v7H2z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 1v3h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span> ${d.docNo}</span>`:''}
+          <span class="badge b-green" style="color:var(--raindance)">Total: ${fmtMoney(d.totalIncl)}</span>
+          <span style="font-size:12px;color:var(--text3)">${d.items.length} product${d.items.length!==1?'s':''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="icon-btn edit" onclick="event.stopPropagation();editDelivery(${i})" title="Edit"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+          <button class="icon-btn del"  onclick="event.stopPropagation();deleteDelivery(${i})" title="Delete"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          <span style="color:var(--text3);transition:transform .2s;display:inline-flex" id="dlc-${d.id}"><span class="ic"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9" fill="currentColor"/></svg></span></span>
+        </div>
+      </div>
+      <div class="del-log-body" id="dlb-${d.id}">
+        <div class="table-scroll"><table>
+          <thead><tr><th>Product</th><th>Qty</th><th>Unit</th><th>Price/unit</th><th>VAT</th><th>Price/unit after tax</th><th>Price after tax</th></tr></thead>
+          <tbody>
+            ${d.items.map(it=>`
+              <tr>
+                <td style="font-weight:600">${it.product}</td>
+                <td>${it.qty}</td>
+                <td><span class="badge b-amber" style="font-size:11px">${it.unit}</span></td>
+                <td style="color:var(--text2)">${(it.priceFixed??it.priceExcl)!=null?fmtMoney(it.priceFixed??it.priceExcl):'—'}</td>
+                <td><span class="badge b-grey">${it.vat}%</span></td>
+                <td style="color:var(--green);font-weight:600">${(it.priceAfter??it.priceIncl)!=null?'€'+(it.priceAfter??it.priceIncl).toFixed(3):'—'}</td>
+                <td style="font-weight:600">${(it.priceAfter??it.priceIncl)!=null?fmtMoney(it.priceAfter??it.priceIncl):'—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+        <div class="del-totals-footer" style="display:flex;justify-content:flex-end;gap:24px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px">
+          <span style="color:var(--text2)">Before tax: <strong>${fmtMoney(d.totalExcl)}</strong></span>
+          <span style="color:var(--text2)">Tax: <strong style="color:var(--amber)">${fmtMoney(d.totalIncl-d.totalExcl)}</strong></span>
+          <span style="color:var(--text2)">After tax: <strong style="color:var(--green);font-size:15px">${fmtMoney(d.totalIncl)}</strong></span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ STORAGE ══ */
+function togglePriority(idx){storage[idx].priority=!storage[idx].priority;persist();renderStorage();}
+
+// Live-update just the qty/min value in memory (no persist, no re-render) so typing stays smooth.
+function updateStorageQtyLive(idx,val){ storage[idx].qty = parseFloat(val) || 0; refreshStorageRowStatus(idx); }
+function updateStorageMinLive(idx,val){ storage[idx].minQty = parseFloat(val) || 0; refreshStorageRowStatus(idx); }
+
+// Update only this row's status badge + row priority class in place, without touching the input the user is typing in.
+function refreshStorageRowStatus(idx){
+  const item = storage[idx];
+  const badgeEl = document.querySelector(`.sr-status-badge[data-idx="${idx}"]`);
+  if (badgeEl) badgeEl.innerHTML = statusBadge(item);
+}
+
+// Persist + full re-sort/re-render only happens once the user leaves the field.
+function commitStorageChange(){ persist(); renderStorage(); }
+
+function renderStorage(){
+  const list=document.getElementById('storage-list');
+  if(!storage.length){list.innerHTML='<div class="empty">No products yet — add them in Suppliers.</div>';return;}
+
+  // Auto-sort: lowest stock first (red), then medium (amber), then no-min-set (grey), then good (green) last.
+  // Within each status group, priority items come first, and original relative order is preserved otherwise.
+  const order = { red: 0, amber: 1, grey: 2, green: 3 };
+  const indexed = storage.map((item, originalIdx) => ({ item, originalIdx, status: getStatus(item) }));
+  indexed.sort((a, b) => {
+    if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+    if (a.item.priority !== b.item.priority) return a.item.priority ? -1 : 1;
+    return a.originalIdx - b.originalIdx;
+  });
+
+  list.innerHTML=indexed.map(({item, originalIdx: i})=>`
+    <div class="${item.priority?'storage-row priority':'storage-row'}">
+      <div class="sr-cell sr-cell-name" style="display:flex;align-items:center;gap:8px">
+        <button class="icon-btn" onclick="togglePriority(${i})" style="font-size:18px;padding:0 2px" title="Mark as priority">
+          ${item.priority?'<span class="ic" style="color:var(--sherwoodtan)"><svg width="13" height="13" viewBox="0 0 14 14"><polygon points="7,1 13,7 7,13 1,7" fill="currentColor"/></svg></span>':'<span class="ic" style="color:var(--text3)"><svg width="13" height="13" viewBox="0 0 14 14"><polygon points="7,1 13,7 7,13 1,7" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>'}
+        </button>
+        <div>
+          <div style="font-weight:600">${item.prodName}</div>
+          <div style="font-size:11px;color:var(--text3)">${item.supName}</div>
+        </div>
+      </div>
+      <div class="sr-cell sr-cell-avail">
+        <span class="m-lbl">Available</span>
+        <span class="sr-control">
+          <input type="number" class="qty-inp-storage" value="${item.qty}" min="0" step="0.01"
+            oninput="updateStorageQtyLive(${i},this.value)" onblur="commitStorageChange()">
+          <span class="sr-unit">${item.unit}</span>
+        </span>
+      </div>
+      <div class="sr-cell sr-cell-min">
+        <span class="m-lbl">Min qty</span>
+        <span class="sr-control">
+          <input type="number" class="min-inp" value="${item.minQty}" min="0" step="0.01"
+            oninput="updateStorageMinLive(${i},this.value)" onblur="commitStorageChange()">
+          <span class="sr-unit">${item.unit}</span>
+        </span>
+      </div>
+      <div class="sr-cell sr-cell-status">
+        <span class="m-lbl">Status</span>
+        <span class="sr-status-badge" data-idx="${i}">${statusBadge(item)}</span>
+      </div>
+      <div class="sr-cell sr-cell-supplier">
+        <span class="m-lbl">Supplier</span>
+        <span class="badge b-blue" style="font-size:11px">${item.supName}</span>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ RECIPES ══ */
+/* Data structure:
+   categories = [{name, recipes:[{name, segments:[{name, instructions, preSaves:[{name, ingredients:[{supplier,product,qty,unit}]}]}]}]}]
+*/
+
+// ── navigation state ──
+let rcState = { view:'categories', catIdx:-1, recIdx:-1, segIdx:-1 };
+
+function rcGo(view, catIdx=-1, recIdx=-1, segIdx=-1) {
+  rcState = { view, catIdx, recIdx, segIdx };
+  renderRecipes();
+}
+
+function renderRecipes() {
+  renderRecipeNav();
+  const c = document.getElementById('recipe-content');
+  if      (rcState.view === 'categories') renderCategoryList(c);
+  else if (rcState.view === 'recipes')    renderRecipeList(c);
+  else if (rcState.view === 'segments')   renderRecipeList(c);  // segments now inline in recipe list
+  // presaves view removed — everything is inline now
+  else if (rcState.view === 'new-cat')    renderNewCategory(c);
+  else if (rcState.view === 'new-rec')    renderNewRecipe(c);
+  else if (rcState.view === 'new-seg')    renderNewSegment(c);
+  else if (rcState.view === 'new-ps')     renderNewPreSave(c);
+  else if (rcState.view === 'edit-cat')   renderNewCategory(c, true);
+  else if (rcState.view === 'edit-rec')   renderNewRecipe(c, true);
+  else if (rcState.view === 'edit-seg')   renderNewSegment(c, true);
+  else if (rcState.view === 'edit-ps')    renderNewPreSave(c, true);
+}
+
+function renderRecipeNav() {
+  const nav = document.getElementById('recipe-nav');
+  const { view, catIdx, recIdx, segIdx } = rcState;
+  const cat = catIdx>=0 ? categories[catIdx] : null;
+  const rec = cat && recIdx>=0 ? cat.recipes[recIdx] : null;
+  const seg = rec && segIdx>=0 ? rec.segments[segIdx] : null;
+  let crumbs = [`<button class="btn btn-sm" style="font-size:11px" onclick="rcGo('categories')">All Categories</button>`];
+  if (cat) crumbs.push(`<button class="btn btn-sm" style="font-size:11px" onclick="rcGo('recipes',${catIdx})">${cat.name}</button>`);
+  if (rec) crumbs.push(`<button class="btn btn-sm" style="font-size:11px" onclick="rcGo('recipes',${catIdx})">${rec.name}</button>`);
+  if (seg) crumbs.push(`<span style="font-size:12px;color:var(--text2)">${seg.name}</span>`);
+  nav.innerHTML = `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">${crumbs.join('<span style="color:var(--text3)"> › </span>')}</div>`;
+}
+
+// ── CATEGORY LIST ──
+function renderCategoryList(c) {
+  let html = `<div class="card">
+    <div class="card-title">Recipe Categories</div>
+    <div class="g2" style="margin-bottom:0">
+      <div><label>Category name</label><input id="new-cat-name" placeholder="e.g. Tarts, Cakes, Sauces"></div>
+      <div style="padding-bottom:1px"><button class="btn btn-blue" style="width:100%" onclick="addCategory()">
+        <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add category</button></div>
+    </div>
+  </div>`;
+  if (!categories.length) { html += '<div class="empty">No categories yet — add one above.</div>'; c.innerHTML=html; return; }
+  html += categories.map((cat,ci) => `
+    <div class="recipe-card">
+      <div class="recipe-head" style="cursor:pointer" onclick="rcGo('recipes',${ci})">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div>
+            <div class="recipe-title">${cat.name}</div>
+            <div class="recipe-sub">${cat.recipes.length} recipe${cat.recipes.length!==1?'s':''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
+          <button class="icon-btn edit" onclick="rcGo('edit-cat',${ci})" title="Rename">
+            <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+          <button class="icon-btn del" onclick="deleteCategory(${ci})" title="Delete">
+            <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          <span style="color:var(--text3);margin-left:4px;display:inline-flex">
+            <span class="ic"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9" fill="currentColor"/></svg></span></span>
+        </div>
+      </div>
+    </div>`).join('');
+  c.innerHTML = html;
+}
+
+function addCategory() {
+  const name = document.getElementById('new-cat-name')?.value.trim();
+  if (!name) { alert('Enter a category name.'); return; }
+  if (categories.find(c=>c.name.toLowerCase()===name.toLowerCase())) { alert('Category already exists.'); return; }
+  categories.push({name, recipes:[]});
+  persist(); renderRecipes();
+}
+function deleteCategory(ci) {
+  if (!confirm(`Delete category "${categories[ci].name}" and all its recipes?`)) return;
+  categories.splice(ci,1); persist(); rcGo('categories');
+}
+
+// ── EDIT CATEGORY ──
+function renderNewCategory(c, editing=false) {
+  const cat = editing ? categories[rcState.catIdx] : null;
+  c.innerHTML = `<div class="card">
+    <div class="card-title">${editing ? 'Rename Category' : 'New Category'}</div>
+    <div class="g2">
+      <div><label>Name</label><input id="ec-name" value="${cat?cat.name:''}" placeholder="e.g. Tarts"></div>
+      <div style="padding-bottom:1px"><button class="btn btn-blue" style="width:100%" onclick="${editing?'saveCategoryEdit()':'addCategory2()'}">
+        <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" rx="1"/><rect x="3" y="1" width="4" height="3" fill="currentColor"/><rect x="3" y="7" width="6" height="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span> Save</button></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-sm" onclick="rcGo('categories')">Cancel</button></div>
+  </div>`;
+}
+function addCategory2() {
+  const name = document.getElementById('ec-name')?.value.trim();
+  if (!name) return;
+  categories.push({name, recipes:[]}); persist(); rcGo('categories');
+}
+function saveCategoryEdit() {
+  const name = document.getElementById('ec-name')?.value.trim();
+  if (!name) return;
+  categories[rcState.catIdx].name = name; persist(); rcGo('recipes', rcState.catIdx);
+}
+
+// ── RECIPE LIST ──
+function renderRecipeList(c) {
+  const {catIdx} = rcState;
+  const cat = categories[catIdx];
+  if (!cat) { rcGo('categories'); return; }
+
+  // Add recipe form at top
+  let html = `<div class="card" style="margin-bottom:.75rem">
+    <div class="card-title">Add recipe to "${cat.name}"</div>
+    <div class="g2" style="margin-bottom:0">
+      <div><label>Recipe name</label><input id="new-rec-name" placeholder="e.g. Lemon Tart"></div>
+      <div style="padding-bottom:1px"><button class="btn btn-blue" style="width:100%" onclick="addRecipeToCategory()">
+        <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add recipe</button></div>
+    </div>
+  </div>`;
+
+  if (!cat.recipes.length) { html += '<div class="empty">No recipes yet — add one above.</div>'; c.innerHTML=html; return; }
+
+  // Each recipe card — collapsed by default, click header to expand inline
+  html += cat.recipes.map((rec,ri) => {
+    const segHtml = renderSegmentsInline(catIdx, ri, rec);
+    return `
+    <div class="recipe-card" id="reccard-${catIdx}-${ri}">
+      <div class="recipe-head" style="cursor:pointer" onclick="toggleRecipeInline(${catIdx},${ri})">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div>
+            <div class="recipe-title">${rec.name}</div>
+            <div class="recipe-sub">${rec.segments.length} segment${rec.segments.length!==1?'s':''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
+          <button class="icon-btn edit" title="Rename" onclick="rcGo('edit-rec',${catIdx},${ri})">
+            <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+          <button class="icon-btn del" title="Delete" onclick="deleteRecipeFromCategory(${catIdx},${ri})">
+            <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          <span style="color:var(--text3);transition:transform .2s;margin-left:4px;display:inline-flex" id="recchev-${catIdx}-${ri}">
+            <span class="ic"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9" fill="currentColor"/></svg></span></span>
+        </div>
+      </div>
+      <div class="recipe-body collapsed" id="recbody-${catIdx}-${ri}">
+        ${segHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML = html;
+}
+
+function renderSegmentsInline(catIdx, ri, rec) {
+  if (!rec.segments.length) return `
+    <div style="padding:12px 16px">
+      <div style="font-size:13px;color:var(--text3);margin-bottom:10px">No segments yet.</div>
+      <button class="btn btn-sm btn-blue" onclick="rcGo('new-seg',${catIdx},${ri})">
+        <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add first segment</button>
+    </div>`;
+
+  return `<div style="padding:10px 16px 14px">` +
+    rec.segments.map((seg, si) => {
+      const chips = seg.preSaves.map((ps, psi) => `
+        <button class="ps-chip" id="pschip-${catIdx}-${ri}-${si}-${psi}"
+          onclick="togglePsInline(${catIdx},${ri},${si},${psi})">${ps.name}</button>`).join('');
+
+      const addChip = `
+        <button class="ps-chip ps-chip-add" id="pschip-add-${catIdx}-${ri}-${si}"
+          onclick="togglePsAddForm(${catIdx},${ri},${si})">
+          <span class="ic"><svg width="10" height="10" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span></button>`;
+
+      // placeholder panels for each pre-save (collapsed by default)
+      const psPanels = seg.preSaves.map((ps, psi) => `
+        <div class="ps-inline-panel" id="pspanel-${catIdx}-${ri}-${si}-${psi}" style="display:none">
+          ${buildPsPanel(catIdx, ri, si, psi, ps)}
+        </div>`).join('');
+
+      // inline add form panel
+      const addPanel = `
+        <div class="ps-inline-panel ps-add-form" id="psadd-${catIdx}-${ri}-${si}" style="display:none">
+          ${buildPsAddForm(catIdx, ri, si)}
+        </div>`;
+
+      return `
+      <div class="seg-inline-card">
+        <div class="seg-inline-head">
+          <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+            <div class="recipe-title" style="font-size:14px">${seg.name}</div>
+            <div class="recipe-sub" style="font-size:11px;white-space:nowrap" id="seg-sub-${catIdx}-${ri}-${si}">${seg.preSaves.length} pre-save${seg.preSaves.length!==1?'s':''}</div>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0">
+            <button class="icon-btn edit" title="Rename segment" onclick="rcGo('edit-seg',${catIdx},${ri},${si})">
+              <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+            <button class="icon-btn del" title="Delete segment" onclick="deleteSegment(${catIdx},${ri},${si})">
+              <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          </div>
+        </div>
+        <div class="ps-chips-row" id="chips-row-${catIdx}-${ri}-${si}">${chips}${addChip}</div>
+        <div id="panels-wrap-${catIdx}-${ri}-${si}">${psPanels}${addPanel}</div>
+      </div>`;
+    }).join('') +
+    `<div style="margin-top:10px">
+      <button class="btn btn-sm" onclick="rcGo('new-seg',${catIdx},${ri})">
+        <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add segment</button>
+    </div></div>`;
+}
+
+function buildPsPanel(ci, ri, si, psi, ps) {
+  const ingRows = ps.ingredients.map((ing,ii) => `
+    <tr>
+      <td style="font-weight:600">${ing.product}</td>
+      <td><span class="badge b-blue" style="font-size:10px">${ing.supplier}</span></td>
+      <td id="psq-${ci}-${ri}-${si}-${psi}-${ii}"><span style="color:var(--text2)">${ing.qty} ${ing.unit}</span></td>
+      <td>${availBadge(ing.supplier,ing.product,ing.qty,ing.unit)}</td>
+    </tr>`).join('');
+
+  return `
+  <div style="padding:12px 14px;border-top:1px solid var(--border)">
+    ${ps.instructions ? `<div style="font-size:12px;color:var(--text2);background:var(--bg4);border-radius:7px;padding:9px 11px;margin-bottom:10px;line-height:1.5">${ps.instructions.replace(/\n/g,'<br>')}</div>` : ''}
+    <div class="table-scroll"><table>
+      <thead><tr><th>Ingredient</th><th>Supplier</th><th>Qty</th><th>Available</th></tr></thead>
+      <tbody id="pstbody-${ci}-${ri}-${si}-${psi}">${ingRows}</tbody>
+    </table></div>
+    <div class="ps-action-bar">
+      <div class="sr-control" style="flex-shrink:0">
+        <input type="number" class="qty-inp-storage" id="psscaleinp-${ci}-${ri}-${si}-${psi}"
+          value="1" min="0.5" step="0.5" placeholder="1"
+          oninput="updatePsScale(${ci},${ri},${si},${psi})"
+          style="width:64px;border-radius:6px 0 0 6px">
+        <span class="sr-unit" style="display:inline-flex;align-items:center;gap:4px;padding:0 8px">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="1" y="1" width="10" height="10" rx="1.5"/>
+            <line x1="3.5" y1="6" x2="8.5" y2="6"/><line x1="6" y1="3.5" x2="6" y2="8.5"/>
+          </svg>
+          ×
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <label style="margin:0;font-size:11px;color:var(--raindance);text-transform:none;letter-spacing:0">Made</label>
+        <input type="date" id="ps-made-${ci}-${ri}-${si}-${psi}" value="${todayStr()}"
+          style="width:125px;background:var(--bg3);border:1px solid var(--narragansett);border-radius:6px;color:var(--raindance);font-weight:600;padding:5px 7px;font-size:12px">
+
+      </div>
+      <div style="display:flex;gap:6px;margin-left:auto;flex-shrink:0">
+        <button class="btn btn-sm" onclick="clonePsInline(${ci},${ri},${si},${psi})" style="font-size:11px;color:var(--sherwoodtan);border-color:var(--sherwoodtan)">
+          <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><rect x="1" y="1" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.3" rx="1"/><rect x="3" y="3" width="8" height="8" fill="var(--bg2)" stroke="currentColor" stroke-width="1.3" rx="1"/></svg></span> Save as new</button>
+        <button class="icon-btn edit" title="Edit" onclick="editPsInline(${ci},${ri},${si},${psi})">
+          <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
+        <button class="icon-btn del" onclick="deletePsInline(${ci},${ri},${si},${psi})">
+          <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 3h8M4.5 3V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1M3 3l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L9 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <button class="btn btn-green btn-sm" id="ps-send-${ci}-${ri}-${si}-${psi}"
+          onclick="sendPsToToday(${ci},${ri},${si},${psi})">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 12l10-10M6 2h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Send</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildPsAddForm(ci, ri, si, prefill=null) {
+  const isEdit = prefill && prefill.psi >= 0;
+  const ps = prefill || null;
+  const psiAttr = isEdit ? prefill.psi : -1;
+  const ingRowsHtml = ps ? (ps.ingredients||[]).map(ing => buildIngRow(ing)).join('') : '';
+  return `
+  <div style="padding:12px 14px;border-top:1px solid var(--border2)">
+    <div style="margin-bottom:12px">
+      <label style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block">Pre-save name</label>
+      <input id="psf-name-${ci}-${ri}-${si}" value="${ps&&ps.name?ps.name:''}" placeholder='e.g. "1 tart" or "20×20 batch"'
+        style="font-size:15px;font-weight:700;background:var(--bg3);border:2px solid var(--border2);border-radius:99px;padding:9px 18px;width:100%;color:var(--text);text-align:center;letter-spacing:.01em">
+    </div>
+    <div style="margin-bottom:10px">
+      <textarea id="psf-instr-${ci}-${ri}-${si}" placeholder="Instructions (optional)..."
+        style="width:100%;min-height:60px;padding:7px 10px;font-size:12px;background:var(--bg4);border:1px solid var(--border);border-radius:7px;color:var(--text2);resize:vertical;font-family:inherit;line-height:1.5">${ps&&ps.instructions?ps.instructions:''}</textarea>
+    </div>
+    <div id="psf-rows-${ci}-${ri}-${si}">${ingRowsHtml}</div>
+    <button class="btn btn-sm" style="margin-bottom:10px" onclick="addPsFormRow(${ci},${ri},${si})">
+      <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add ingredient</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm" onclick="closePsAddForm(${ci},${ri},${si})">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="${isEdit?`updatePsInline(${ci},${ri},${si},${psiAttr})`:`savePsInline(${ci},${ri},${si})`}">
+        <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> ${isEdit?'Safe (update)':'Safe'}</button>
+    </div>
+  </div>`;
+}
+
+function editPsInline(ci, ri, si, psi) {
+  // Open the edit form in the add-form slot, close panels
+  document.querySelectorAll(`[id^="pspanel-${ci}-${ri}-${si}-"]`).forEach(p => p.style.display='none');
+  document.querySelectorAll(`[id^="pschip-${ci}-${ri}-${si}-"]`).forEach(c => c.classList.remove('ps-chip-active'));
+  const ps = categories[ci].recipes[ri].segments[si].preSaves[psi];
+  const addSlot = document.getElementById(`psadd-${ci}-${ri}-${si}`);
+  const addChip = document.getElementById(`pschip-add-${ci}-${ri}-${si}`);
+  if (addSlot) {
+    addSlot.innerHTML = buildPsAddForm(ci, ri, si, {psi, name:ps.name, instructions:ps.instructions||'', ingredients:ps.ingredients});
+    addSlot.style.display = '';
+    // add ingredient rows for existing ingredients
+    addSlot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  if (addChip) addChip.classList.add('ps-chip-active');
+}
+
+function updatePsInline(ci, ri, si, psi) {
+  const name  = document.getElementById(`psf-name-${ci}-${ri}-${si}`)?.value.trim();
+  const instr = document.getElementById(`psf-instr-${ci}-${ri}-${si}`)?.value.trim()||'';
+  if (!name) { alert('Enter a name.'); return; }
+  const rows = document.querySelectorAll(`#psf-rows-${ci}-${ri}-${si} .ing-row`);
+  const ingredients = [];
+  let valid = true;
+  rows.forEach(row => {
+    const supplier = row.querySelectorAll('select')[0].value;
+    const product  = row.querySelector('.prod-sel').value;
+    const qty      = parseFloat(row.querySelector('.qty-inp').value);
+    const unit     = row.querySelector('.unit-inp').value;
+    if (!product||isNaN(qty)||qty<=0) { valid=false; return; }
+    ingredients.push({supplier,product,qty,unit});
+  });
+  if (!valid||!ingredients.length) { alert('Check all ingredient rows.'); return; }
+  categories[ci].recipes[ri].segments[si].preSaves[psi] = {name, instructions:instr, ingredients};
+  persist();
+  refreshChipsRow(ci, ri, si);
+  closePsAddForm(ci, ri, si);
+  // open the updated panel
+  const panel = document.getElementById(`pspanel-${ci}-${ri}-${si}-${psi}`);
+  const chip  = document.getElementById(`pschip-${ci}-${ri}-${si}-${psi}`);
+  if (panel) { panel.innerHTML = buildPsPanel(ci,ri,si,psi,categories[ci].recipes[ri].segments[si].preSaves[psi]); panel.style.display=''; }
+  if (chip)  chip.classList.add('ps-chip-active');
+}
+function togglePsInline(ci, ri, si, psi) {
+  const panel = document.getElementById(`pspanel-${ci}-${ri}-${si}-${psi}`);
+  const chip  = document.getElementById(`pschip-${ci}-${ri}-${si}-${psi}`);
+  if (!panel) return;
+  const opening = panel.style.display === 'none';
+  // close all other panels in this segment first
+  document.querySelectorAll(`[id^="pspanel-${ci}-${ri}-${si}-"]`).forEach(p => { p.style.display='none'; });
+  document.querySelectorAll(`[id^="pschip-${ci}-${ri}-${si}-"]`).forEach(c => c.classList.remove('ps-chip-active'));
+  document.getElementById(`psadd-${ci}-${ri}-${si}`).style.display = 'none';
+  document.getElementById(`pschip-add-${ci}-${ri}-${si}`)?.classList.remove('ps-chip-active');
+  if (opening) {
+    panel.style.display = '';
+    chip?.classList.add('ps-chip-active');
+    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+}
+
+// Toggle the add-form panel
+function togglePsAddForm(ci, ri, si) {
+  const panel = document.getElementById(`psadd-${ci}-${ri}-${si}`);
+  const chip  = document.getElementById(`pschip-add-${ci}-${ri}-${si}`);
+  if (!panel) return;
+  const opening = panel.style.display === 'none';
+  document.querySelectorAll(`[id^="pspanel-${ci}-${ri}-${si}-"]`).forEach(p => { p.style.display='none'; });
+  document.querySelectorAll(`[id^="pschip-${ci}-${ri}-${si}-"]`).forEach(c => c.classList.remove('ps-chip-active'));
+  if (opening) {
+    panel.style.display = '';
+    chip?.classList.add('ps-chip-active');
+    panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  } else {
+    panel.style.display = 'none';
+    chip?.classList.remove('ps-chip-active');
+  }
+}
+function closePsAddForm(ci,ri,si) {
+  document.getElementById(`psadd-${ci}-${ri}-${si}`).style.display='none';
+  document.getElementById(`pschip-add-${ci}-${ri}-${si}`)?.classList.remove('ps-chip-active');
+}
+
+function addPsFormRow(ci,ri,si) {
+  const container = document.getElementById(`psf-rows-${ci}-${ri}-${si}`);
+  if (!container) return;
+  container.insertAdjacentHTML('beforeend', buildIngRow(null));
+}
+
+function savePsInline(ci, ri, si) {
+  const name  = document.getElementById(`psf-name-${ci}-${ri}-${si}`)?.value.trim();
+  const instr = document.getElementById(`psf-instr-${ci}-${ri}-${si}`)?.value.trim()||'';
+  if (!name) { alert('Enter a pre-save name.'); return; }
+  const rows = document.querySelectorAll(`#psf-rows-${ci}-${ri}-${si} .ing-row`);
+  if (!rows.length) { alert('Add at least one ingredient.'); return; }
+  const ingredients = [];
+  let valid = true;
+  rows.forEach(row => {
+    const supplier = row.querySelectorAll('select')[0].value;
+    const product  = row.querySelector('.prod-sel').value;
+    const qty      = parseFloat(row.querySelector('.qty-inp').value);
+    const unit     = row.querySelector('.unit-inp').value;
+    if (!product||isNaN(qty)||qty<=0) { valid=false; return; }
+    ingredients.push({supplier,product,qty,unit});
+  });
+  if (!valid) { alert('Check all ingredient rows.'); return; }
+  categories[ci].recipes[ri].segments[si].preSaves.push({name, instructions:instr, ingredients});
+  persist();
+  // refresh chips row in place, then open the new chip
+  refreshChipsRow(ci, ri, si);
+  closePsAddForm(ci, ri, si);
+  const newPsi = categories[ci].recipes[ri].segments[si].preSaves.length - 1;
+  setTimeout(() => togglePsInline(ci, ri, si, newPsi), 50);
+}
+
+// Refresh just the chips row for a segment without rebuilding the whole page
+function refreshChipsRow(ci, ri, si) {
+  const seg = categories[ci].recipes[ri].segments[si];
+  const chipsRow = document.getElementById(`chips-row-${ci}-${ri}-${si}`);
+  if (!chipsRow) return;
+  // rebuild panel divs and chips
+  const psChips = seg.preSaves.map((ps,psi) =>
+    `<button class="ps-chip" id="pschip-${ci}-${ri}-${si}-${psi}" onclick="togglePsInline(${ci},${ri},${si},${psi})">${ps.name}</button>`
+  ).join('');
+  const addChip = `<button class="ps-chip ps-chip-add" id="pschip-add-${ci}-${ri}-${si}" onclick="togglePsAddForm(${ci},${ri},${si})" title="Add pre-save">+</button>`;
+  chipsRow.innerHTML = (seg.preSaves.length ? psChips : `<span style="font-size:12px;color:var(--text3);font-style:italic;padding:6px 0">No pre-saves yet</span>`) + addChip;
+
+  // rebuild panel slots
+  const panelsWrap = document.getElementById(`panels-wrap-${ci}-${ri}-${si}`);
+  if (!panelsWrap) return;
+  panelsWrap.innerHTML = seg.preSaves.map((ps,psi) =>
+    `<div id="pspanel-${ci}-${ri}-${si}-${psi}" style="display:none">${buildPsPanel(ci,ri,si,psi,ps)}</div>`
+  ).join('') +
+  `<div id="psadd-${ci}-${ri}-${si}" style="display:none"></div>`;
+  // update segment subtitle
+  const subtitle = document.getElementById(`seg-sub-${ci}-${ri}-${si}`);
+  if (subtitle) subtitle.textContent = `${seg.preSaves.length} pre-save${seg.preSaves.length!==1?'s':''}`;
+}
+
+function deletePsInline(ci,ri,si,psi) {
+  if (!confirm(`Delete pre-save "${categories[ci].recipes[ri].segments[si].preSaves[psi].name}"?`)) return;
+  categories[ci].recipes[ri].segments[si].preSaves.splice(psi,1);
+  persist();
+  refreshChipsRow(ci, ri, si);
+}
+
+function clonePsInline(ci,ri,si,psi) {
+  const ps = categories[ci].recipes[ri].segments[si].preSaves[psi];
+  // close all open panels
+  document.querySelectorAll(`[id^="pspanel-${ci}-${ri}-${si}-"]`).forEach(p => p.style.display='none');
+  document.querySelectorAll(`[id^="pschip-${ci}-${ri}-${si}-"]`).forEach(c => c.classList.remove('ps-chip-active'));
+  // open the add form pre-filled with cloned data but blank name
+  const addSlot = document.getElementById(`psadd-${ci}-${ri}-${si}`);
+  const addChip = document.getElementById(`pschip-add-${ci}-${ri}-${si}`);
+  if (addSlot) {
+    addSlot.innerHTML = buildPsAddForm(ci, ri, si, {
+      psi: -1,  // -1 = new, not edit
+      name: '',
+      instructions: ps.instructions || '',
+      ingredients: ps.ingredients.map(ing => ({...ing}))
+    });
+    addSlot.style.display = '';
+    addSlot.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  if (addChip) addChip.classList.add('ps-chip-active');
+}
+
+function toggleRecipeInline(catIdx, ri) {
+  const body = document.getElementById(`recbody-${catIdx}-${ri}`);
+  const chev = document.getElementById(`recchev-${catIdx}-${ri}`);
+  if (!body) return;
+  const closing = !body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', closing);
+  if (chev) chev.style.transform = closing ? '' : 'rotate(90deg)';
+}
+
+// ── PRE-SAVE LIST (main working view) ──
+
+// Show instructions above whichever pre-save card was just opened
+function showInstructionsAboveCard(ci,ri,si,psi) {
+  const instr = document.getElementById('seg-instr-card');
+  const card  = document.getElementById(`pscard-${ci}-${ri}-${si}-${psi}`);
+  if (!instr || !card) return;
+  const seg = categories[ci]?.recipes[ri]?.segments[si];
+  if (instr.style.display === 'none' || instr.previousElementSibling !== card.previousElementSibling) {
+    card.parentNode.insertBefore(instr, card);
+    instr.style.display = '';
+  } else {
+    // instructions already visible above this card — hide them (toggle off)
+    instr.style.display = 'none';
+  }
+}
+
+function rcGo(view, catIdx=-1, recIdx=-1, segIdx=-1, psIdx=-1) {
+  rcState = { view, catIdx, recIdx, segIdx, psIdx };
+  renderRecipes();
+}
+
+function togglePsBody(ci,ri,si,psi) {
+  const body  = document.getElementById(`psbody-${ci}-${ri}-${si}-${psi}`);
+  const sbar  = document.getElementById(`psscale-${ci}-${ri}-${si}-${psi}`);
+  const chev  = document.getElementById(`pschev-${ci}-${ri}-${si}-${psi}`);
+  if (!body) return;
+  const closing = !body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', closing);
+  sbar.classList.toggle('collapsed', closing);
+  if (chev) chev.style.transform = closing ? '' : 'rotate(90deg)';
+  if (!closing) {
+    // opened — move instructions above this card
+    showInstructionsAboveCard(ci,ri,si,psi);
+  } else {
+    // closed — hide instructions
+    const instr = document.getElementById('seg-instr-card');
+    if (instr) instr.style.display = 'none';
+  }
+}
+
+function saveInstructions() {
+  const {catIdx,recIdx,segIdx} = rcState;
+  const val = document.getElementById('seg-instructions')?.value || '';
+  categories[catIdx].recipes[recIdx].segments[segIdx].instructions = val;
+  persist();
+  const btn = event.target.closest('button');
+  if (btn) { btn.innerHTML = '<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Saved!'; setTimeout(()=>{ btn.innerHTML = '<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" rx="1"/><rect x="3" y="1" width="4" height="3" fill="currentColor"/><rect x="3" y="7" width="6" height="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span> Save instructions'; }, 1500); }
+}
+
+function deletePreSave(ci,ri,si,psi) {
+  if (!confirm(`Delete pre-save "${categories[ci].recipes[ri].segments[si].preSaves[psi].name}"?`)) return;
+  categories[ci].recipes[ri].segments[si].preSaves.splice(psi,1);
+  persist(); rcGo('recipes',ci);
+}
+
+// ── CALCULATOR ──
+function updatePsScale(ci,ri,si,psi) {
+  const ps = categories[ci]?.recipes[ri]?.segments[si]?.preSaves[psi];
+  if (!ps) return;
+  const mult = parseFloat(document.getElementById(`psscaleinp-${ci}-${ri}-${si}-${psi}`)?.value) || 1;
+  const tbody = document.getElementById(`pstbody-${ci}-${ri}-${si}-${psi}`);
+  if (!tbody) return;
+  tbody.querySelectorAll('tr').forEach((tr,j) => {
+    const ing = ps.ingredients[j]; if (!ing) return;
+    const scaled = parseFloat((ing.qty * mult).toFixed(4));
+    const same = mult === 1;
+    tr.querySelector('td:nth-child(3)').innerHTML = same
+      ? `<span style="color:var(--text2)">${ing.qty} ${ing.unit}</span>`
+      : `<span style="color:var(--text3)">${ing.qty} ${ing.unit}</span> &rarr; <span style="color:var(--raindance);font-weight:600">${scaled} ${ing.unit}</span>`;
+    tr.querySelector('td:nth-child(4)').innerHTML = availBadge(ing.supplier,ing.product,scaled,ing.unit);
+  });
+  const sub = document.getElementById(`ps-sub-${ci}-${ri}-${si}-${psi}`);
+  if (sub) sub.innerHTML = mult===1 ? `${ps.ingredients.length} ingredient${ps.ingredients.length!==1?'s':''}` : `Scaled ×${mult}`;
+}
+
+function resetPsScale(ci,ri,si,psi) {
+  const inp = document.getElementById(`psscaleinp-${ci}-${ri}-${si}-${psi}`);
+  if (inp) inp.value = 1;
+  updatePsScale(ci,ri,si,psi);
+}
+
+function sendPsToToday(ci,ri,si,psi) {
+  const ps  = categories[ci]?.recipes[ri]?.segments[si]?.preSaves[psi];
+  const seg = categories[ci]?.recipes[ri]?.segments[si];
+  const rec = categories[ci]?.recipes[ri];
+  if (!ps || !seg || !rec) return;
+  const mult = parseFloat(document.getElementById(`psscaleinp-${ci}-${ri}-${si}-${psi}`)?.value) || 1;
+  const date = todayStr();
+  const scaled = ps.ingredients.map(ing => ({...ing, scaledQty: parseFloat((ing.qty*mult).toFixed(4))}));
+  scaled.forEach(ing => {
+    const item = getStorageItem(ing.supplier, ing.product); if (!item) return;
+    const deduct = convertUnits(ing.scaledQty, ing.unit, item.unit);
+    item.qty = Math.max(0, parseFloat((item.qty - deduct).toFixed(6)));
+  });
+  const madeDate = document.getElementById(`ps-made-${ci}-${ri}-${si}-${psi}`)?.value || date;
+  const logName  = ps.name;
+  usedLog.push({id:Date.now(), date, recipeName:logName, recipeContext:`${rec.name} — ${seg.name}`, portions:mult, basePortions:1, ingredients:scaled, madeDate, status:'pending'});
+  persist();
+  const btn = document.getElementById(`ps-send-${ci}-${ri}-${si}-${psi}`);
+  if (btn) { btn.innerHTML='<span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Sent!'; btn.disabled=true; setTimeout(()=>{btn.innerHTML='<span class="ic"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M2 12l10-10M6 2h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Send'; btn.disabled=false;},1800); }
+}
+
+function clonePreSaveToForm(ci,ri,si,psi) {
+  // Navigate to the new pre-save form with the source psi flagged so it pre-fills
+  rcState = { view:'new-ps', catIdx:ci, recIdx:ri, segIdx:si, psIdx:-1, cloneFrom:psi };
+  renderRecipes();
+}
+
+// ── PRE-SAVE FORM (new / edit / clone) ──
+function renderNewPreSave(c, editing=false) {
+  const {catIdx,recIdx,segIdx,psIdx,cloneFrom} = rcState;
+  const seg = categories[catIdx]?.recipes[recIdx]?.segments[segIdx];
+
+  // source data: editing an existing ps, OR cloning from another ps, OR blank
+  let ps = null;
+  let formTitle = `New Pre-save in "${seg?.name||''}"`;
+  let namePlaceholder = 'e.g. 1 tart';
+  let nameValue = '';
+
+  if (editing && psIdx >= 0) {
+    ps = seg?.preSaves[psIdx];
+    formTitle = `Edit Pre-save in "${seg?.name||''}"`;
+    nameValue = ps?.name || '';
+  } else if (cloneFrom != null && cloneFrom >= 0) {
+    // clone — pre-fill from source but blank the name so user gives it a new one
+    ps = seg?.preSaves[cloneFrom];
+    formTitle = `New Pre-save based on "${ps?.name||''}"`;
+    nameValue = '';
+    namePlaceholder = `e.g. ${ps?.name||''} (large)`;
+  }
+
+  const ingRowsHtml = (ps?.ingredients||[]).map(ing => buildIngRow(ing)).join('');
+
+  c.innerHTML = `<div class="card">
+    <div class="card-title">${formTitle}</div>
+    ${cloneFrom != null && cloneFrom >= 0 ? `<div style="font-size:12px;color:var(--sherwoodtan);margin-bottom:10px;padding:8px 10px;background:rgba(184,154,118,0.12);border:1px solid var(--sherwoodtan);border-radius:7px">Ingredients are copied from <strong>${ps?.name||''}</strong> — change what you need, give it a new name, then save.</div>` : ''}
+    <div style="margin-bottom:12px">
+      <label>Pre-save name</label>
+      <input id="ps-form-name" value="${nameValue}" placeholder="${namePlaceholder}">
+    </div>
+    <div class="card-title" style="margin-bottom:8px">Ingredients</div>
+    <div id="ps-ing-rows">${ingRowsHtml}</div>
+    <button class="btn btn-sm" style="margin-bottom:14px" onclick="addPsIngRow()">
+      <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="2"/></svg></span> Add ingredient</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
+      <button class="btn btn-sm" onclick="rcGo('recipes',${catIdx})">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="savePreSaveForm(${editing?'true':'false'})">
+        <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.4" rx="1"/><rect x="3" y="1" width="4" height="3" fill="currentColor"/><rect x="3" y="7" width="6" height="3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></span> Save pre-save</button>
+    </div>
+  </div>`;
+}
+
+function buildIngRow(ing) {
+  const id = 'psir-' + (rowIdx++);
+  const sn = ing ? ing.supplier : (suppliers[0]?.name||'');
+  const pn = ing ? ing.product : '';
+  const qty = ing ? ing.qty : '';
+  const unit = ing ? ing.unit : unitOf(sn,pn);
+  return `<div class="ing-row" id="${id}">
+    <div><label>Supplier</label><select onchange="onSupChange('${id}',this)">${supOpts(sn)}</select></div>
+    <div><label>Product</label><select class="prod-sel" onchange="onProdChange('${id}',this)">${prodOpts(sn,pn)}</select></div>
+    <div><label>Quantity</label><input type="number" class="qty-inp" value="${qty}" placeholder="200" min="0.001" step="0.001"></div>
+    <div><label>Unit</label><select class="unit-inp">
+      <option value="g"${unit==='g'?' selected':''}>g</option>
+      <option value="kg"${unit==='kg'?' selected':''}>kg</option>
+      <option value="ml"${unit==='ml'?' selected':''}>ml</option>
+      <option value="L"${unit==='L'?' selected':''}>L</option>
+      <option value="pcs"${unit==='pcs'?' selected':''}>pcs</option>
+      <option value="box"${unit==='box'?' selected':''}>box</option>
+      <option value="bag"${unit==='bag'?' selected':''}>bag</option>
+    </select></div>
+    <button class="icon-btn del" style="margin-bottom:1px" onclick="document.getElementById('${id}').remove()">
+      <span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span></button>
+  </div>`;
+}
+
+function addPsIngRow() {
+  document.getElementById('ps-ing-rows').insertAdjacentHTML('beforeend', buildIngRow(null));
+}
+
+function supOpts(sel){return suppliers.map(s=>`<option value="${s.name}"${s.name===sel?' selected':''}>${s.name}</option>`).join('');}
+function prodOpts(supName,sel){
+  const s=suppliers.find(x=>x.name===supName);
+  if(!s||!s.products.length)return'<option value="">— no products —</option>';
+  return s.products.map(p=>`<option value="${p.name}"${p.name===sel?' selected':''}>${p.name}</option>`).join('');
+}
+function unitOf(sn,pn){const s=suppliers.find(x=>x.name===sn);if(!s)return'';const p=s.products.find(x=>x.name===pn);return p?p.unit:'';}
+function onSupChange(id,sel){
+  const row=document.getElementById(id);row.querySelector('.prod-sel').innerHTML=prodOpts(sel.value,'');
+  const s=suppliers.find(x=>x.name===sel.value);const uInp=row.querySelector('.unit-inp');if(uInp){uInp.value=s&&s.products[0]?s.products[0].unit:'g';}
+}
+function onProdChange(id,sel){
+  const row=document.getElementById(id);row.querySelector('.unit-inp').value=unitOf(row.querySelectorAll('select')[0].value,sel.value);
+}
+
+function savePreSaveForm(editing) {
+  const {catIdx,recIdx,segIdx,psIdx} = rcState;
+  const name = document.getElementById('ps-form-name')?.value.trim();
+  if (!name) { alert('Enter a pre-save name.'); return; }
+  const rows = document.querySelectorAll('#ps-ing-rows .ing-row');
+  if (!rows.length) { alert('Add at least one ingredient.'); return; }
+  const ingredients = []; let valid = true;
+  rows.forEach(row => {
+    const supplier = row.querySelectorAll('select')[0].value;
+    const product  = row.querySelector('.prod-sel').value;
+    const qty      = parseFloat(row.querySelector('.qty-inp').value);
+    const unit     = row.querySelector('.unit-inp').value;
+    if (!product||isNaN(qty)||qty<=0) { valid=false; return; }
+    ingredients.push({supplier,product,qty,unit});
+  });
+  if (!valid) { alert('Check all ingredient rows.'); return; }
+  const ps = {name, ingredients};
+  const seg = categories[catIdx].recipes[recIdx].segments[segIdx];
+  if (editing && psIdx>=0) seg.preSaves[psIdx] = ps;
+  else seg.preSaves.push(ps);
+  persist(); rcGo('recipes',catIdx);
+}
+
+
+/* ══ TODAY USED ══ */
+function initTodayTab(){
+  const vd=document.getElementById('view-date');if(!vd.value)vd.value=todayStr();
+  renderTodayUsed();
+}
+function onDateChange(){renderTodayUsed();}
+function renderTodayUsed(){
+  const date=document.getElementById('view-date').value||todayStr();
+  const isToday = date===todayStr();
+  const allEntries=usedLog.filter(e=>e.date===date);
+  document.getElementById('day-summary').textContent=allEntries.length
+    ?`${fmtDate(date)} — ${allEntries.length} recipe${allEntries.length!==1?'s':''} made`
+    :`${fmtDate(date)} — nothing logged`;
+  const container=document.getElementById('today-entries');
+  if(!allEntries.length){container.innerHTML='<div class="empty">No entries for this day.</div>';return;}
+
+  // pending first, done at bottom
+  const pending = allEntries.filter(e=>e.status!=='done');
+  const done    = allEntries.filter(e=>e.status==='done');
+  const entries = [...pending, ...done];
+
+  container.innerHTML=entries.map(e=>{
+    const logIdx=usedLog.findIndex(x=>x.id===e.id);
+    const isDone = e.status==='done';
+    const accentColor = isDone ? 'var(--raindance)' : 'var(--sherwoodtan)';
+    const borderColor = isDone ? 'var(--green-border)' : 'rgba(184,154,118,0.4)';
+    const defaultUnit = e.ingredients[0]?.unit||'g';
+    const unitOpts = ['g','kg','ml','L','pcs','box','bag'].map(u=>`<option value="${u}"${defaultUnit===u?' selected':''}>${u}</option>`).join('');
+    const detailRows=e.ingredients.map(ing=>`
+      <div class="detail-ing-row">
+        <span style="font-weight:600">${ing.product} <span style="font-size:11px;color:var(--text3)">· ${ing.supplier}</span></span>
+        <span style="font-weight:600">${ing.scaledQty} ${ing.unit}</span>
+      </div>`).join('');
+
+    return `
+    <div style="background:var(--bg2);border:1px solid ${borderColor};border-left:3px solid ${accentColor};border-radius:10px;margin-bottom:8px;overflow:hidden" id="tued-${e.id}">
+      <div style="padding:12px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px" onclick="toggleDetail('tudet-${e.id}','tuchev-${e.id}')">
+        <div>
+          <div style="font-weight:700;font-size:14px;color:${accentColor}">${e.recipeName}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          ${isDone ? '<span class="badge b-green" style="font-size:11px"><span class="ic"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Done</span>' : '<span class="badge b-amber" style="font-size:11px">Pending</span>'}
+          <span style="color:var(--text3);transition:transform .2s;display:inline-flex" id="tuchev-${e.id}"><span class="ic"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9" fill="currentColor"/></svg></span></span>
+        </div>
+      </div>
+      <div class="entry-detail" id="tudet-${e.id}">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap">
+          ${e.recipeContext?`<span>${e.recipeContext}</span>`:''}
+          ${e.madeDate?`<span>Made: ${fmtDate(e.madeDate)}</span>`:''}
+          <span>${e.portions} ×</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Ingredients used</div>
+        ${detailRows}
+        ${!isDone ? `
+        <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:10px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            ${isToday ? `<button class="btn btn-sm" style="font-size:11px;color:var(--text3);border-color:var(--border2)" onclick="returnUsed(${logIdx})">
+              <span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><path d="M2 7a5 5 0 1 0 1.7-3.7M2 1v3h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Return</button>` : ''}
+            <div style="display:flex;align-items:flex-end;gap:6px;flex:1;min-width:0;flex-wrap:wrap">
+              <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">Qty left</label>
+                <input type="number" id="lf-qty-${e.id}" placeholder="200" min="0" step="1" style="width:80px;padding:5px 8px;font-size:13px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text)"></div>
+              <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">Unit</label>
+                <select id="lf-unit-${e.id}" class="unit-inp" style="width:85px">${unitOpts}</select></div>
+              <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:3px">Expires</label>
+                <input type="date" id="lf-exp-${e.id}" style="padding:5px 8px;font-size:13px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);width:140px"></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;align-items:flex-end">
+              <button class="btn btn-sm" style="color:var(--sherwoodtan);border-color:var(--sherwoodtan)" onclick="confirmSendToLeftovers(${logIdx},'${e.id}')">
+                <span class="ic"><svg width="11" height="11" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="9" fill="none" stroke="currentColor" stroke-width="1.6" rx="1.5"/><path d="M4 3V2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span> Leftovers</button>
+              <button class="btn btn-sm" style="color:var(--raindance);border-color:var(--raindance)" onclick="markUsedDone(${logIdx})">
+                <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Used</button>
+            </div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDetail(detailId,chevId){
+  const el=document.getElementById(detailId),ch=document.getElementById(chevId);if(!el)return;
+  el.classList.toggle('open');if(ch)ch.style.transform=el.classList.contains('open')?'rotate(90deg)':'';
+}
+
+function markUsedDone(idx) {
+  if (!usedLog[idx]) return;
+  usedLog[idx].status = 'done';
+  persist(); renderTodayUsed();
+}
+
+
+function confirmSendToLeftovers(logIdx, eid) {
+  const entry = usedLog[logIdx];
+  if (!entry) return;
+  const qty     = parseFloat(document.getElementById(`lf-qty-${eid}`)?.value);
+  const unit    = document.getElementById(`lf-unit-${eid}`)?.value || 'g';
+  const expires = document.getElementById(`lf-exp-${eid}`)?.value;
+  if (!expires) { alert('Set an expiry date.'); return; }
+  if (isNaN(qty)||qty<=0) { alert('Enter a quantity left.'); return; }
+  leftovers.push({
+    id: Date.now(),
+    name: entry.recipeName,
+    recipeContext: entry.recipeContext||'',
+    qty, unit, expires,
+    madeDate: entry.madeDate || entry.date,
+    addedDate: todayStr()
+  });
+  entry.status = 'done';
+  persist(); renderTodayUsed();
+}
+
+function returnUsed(idx) {
+  const entry = usedLog[idx];
+  if (!entry) return;
+  if (!confirm('Return this entry? Storage quantities will be restored.')) return;
+  if (entry.ingredients) {
+    entry.ingredients.forEach(ing => {
+      const item = getStorageItem(ing.supplier, ing.product);
+      if (!item) return;
+      const restore = convertUnits(ing.scaledQty, ing.unit, item.unit);
+      item.qty = parseFloat((item.qty + restore).toFixed(6));
+    });
+  }
+  usedLog.splice(idx, 1);
+  persist(); renderTodayUsed();
+}
+
+
+
+/* ══ PRICE CALCULATOR ══ */
+function togglePcBody(key) {
+  const body = document.getElementById('pcbody-'  + key);
+  const tot  = document.getElementById('pctot-'   + key);
+  const port = document.getElementById('pcport-'  + key);
+  const chev = document.getElementById('pcchev-'  + key);
+  if (!body) return;
+  const closing = !body.classList.contains('collapsed');
+  body.classList.toggle('collapsed',  closing);
+  tot.classList.toggle('collapsed',   closing);
+  port.classList.toggle('collapsed',  closing);
+  if (chev) chev.style.transform = closing ? '' : 'rotate(90deg)';
+}
+
+// Get price-per-base-unit from most recent delivery.
+// delivery stores: priceFixed (total price for the delivery), qty (amount delivered), unit (e.g. kg, g, L, ml)
+// Returns: { pricePerUnit, unit, priceFixed, deliveredQty } or null
+function getDeliveryPrice(supName, prodName) {
+  for (const d of deliveries) {
+    if (d.supName !== supName) continue;
+    const item = d.items.find(it => it.product === prodName);
+    if (item) {
+      const price = item.priceFixed ?? item.priceExcl ?? null;
+      if (price === null || !item.qty) return null;
+      // price / qty = price per delivery unit
+      const pricePerUnit = price / item.qty;
+      return { pricePerUnit, unit: item.unit, priceFixed: price, deliveredQty: item.qty };
+    }
+  }
+  return null;
+}
+
+function renderPriceCalc() {
+  const list = document.getElementById('price-calc-list');
+  // Collect all pre-saves from all categories
+  const allPs = [];
+  categories.forEach((cat,ci) => cat.recipes.forEach((rec,ri) => rec.segments.forEach((seg,si) => seg.preSaves.forEach((ps,psi) => {
+    allPs.push({cat,ci,rec,ri,seg,si,ps,psi});
+  }))));
+  if (!allPs.length) {
+    list.innerHTML = '<div class="empty">No pre-saves yet — go to Recipes, create a category → recipe → segment → pre-save first.</div>';
+    return;
+  }
+  list.innerHTML = allPs.map(({cat,ci,rec,ri,seg,si,ps,psi}) => {
+    const key = `${ci}-${ri}-${si}-${psi}`;
+    const ings = ps.ingredients.map((ing,ii) => {
+      const delPrice = getDeliveryPrice(ing.supplier, ing.product);
+      let pricePerRecipeUnit = null;
+      let deliveryNote = '<span style="font-size:10px;color:var(--text3)">no delivery price</span>';
+      if (delPrice) {
+        const recipeQtyInDelUnit = convertUnits(1, ing.unit, delPrice.unit);
+        pricePerRecipeUnit = delPrice.pricePerUnit * recipeQtyInDelUnit;
+        const ppu = (delPrice.priceFixed / delPrice.deliveredQty).toFixed(4);
+        deliveryNote = `<span style="font-size:10px;color:var(--raindance)">&#8595; €${delPrice.priceFixed} / ${delPrice.deliveredQty}${delPrice.unit} = €${ppu}/${delPrice.unit}</span>`;
+      }
+      const inputVal = pricePerRecipeUnit !== null ? pricePerRecipeUnit.toFixed(6) : '';
+      return `
+        <div class="pc-ing-row">
+          <div class="pc-ing-left" style="flex:1;min-width:0">
+            <span style="font-weight:600">${ing.product}</span>
+            <span class="badge b-blue" style="font-size:10px">${ing.supplier}</span>
+            <span style="color:var(--text3);font-size:12px" id="pcqty-${key}-${ii}">${ing.qty} ${ing.unit}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+              ${deliveryNote}
+              <div style="display:flex;align-items:center;gap:4px">
+                <span style="font-size:11px;color:var(--text3)">€/${ing.unit}</span>
+                <input type="number" class="pc-price-inp" id="pcprice-${key}-${ii}"
+                  value="${inputVal}" placeholder="0.000000" min="0" step="0.000001"
+                  oninput="recalcPc('${key}',${ps.ingredients.length})">
+              </div>
+            </div>
+            <span style="font-size:13px;color:var(--text2);min-width:80px;text-align:right;font-weight:600" id="pcline-${key}-${ii}">—</span>
+          </div>
+        </div>`;
+    }).join('');
+    return `
+    <div class="pc-card" id="pcc-${key}">
+      <div class="pc-head" style="cursor:pointer" onclick="togglePcBody('${key}')">
+        <div>
+          <div class="pc-title">${rec.name} — ${seg.name} — ${ps.name}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${cat.name}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px" id="pcsub-${key}">base quantities</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center" onclick="event.stopPropagation()">
+          <button class="btn btn-sm" onclick="importPcPrices('${key}',${JSON.stringify(ps.ingredients).split('"').join('&quot;')})" style="font-size:11px;color:var(--raindance);border-color:var(--blue-border)">&#8595; Re-import</button>
+          <button class="btn btn-sm" onclick="resetPcCard('${key}',${ps.ingredients.length})"><span class="ic"><svg width="12" height="12" viewBox="0 0 14 14"><path d="M2 7a5 5 0 1 0 1.7-3.7M2 1v3h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Clear</button>
+          <span style="color:var(--text3);transition:transform .2s;margin-left:4px;display:inline-flex" id="pcchev-${key}">
+            <span class="ic"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 8,5 2,9" fill="currentColor"/></svg></span></span>
+        </div>
+      </div>
+      <div class="pc-body collapsed" id="pcbody-${key}">
+        <div class="pc-col-header" style="display:grid;grid-template-columns:1fr auto auto;font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:0 0 6px;border-bottom:1px solid var(--border);margin-bottom:2px">
+          <span>Ingredient</span>
+          <span style="text-align:right;padding-right:8px;min-width:140px">Price (€)</span>
+          <span style="min-width:80px;text-align:right">Line cost</span>
+        </div>
+        ${ings}
+      </div>
+      <div class="pc-total-bar collapsed" id="pctot-${key}">
+        <div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:2px">Total cost</div>
+          <div style="font-size:20px;font-weight:700;color:var(--raindance)" id="pctotal-${key}">—</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:2px">Cost per ×1</div>
+          <div style="font-size:20px;font-weight:700;color:var(--sherwoodtan)" id="pcper-${key}">—</div>
+        </div>
+      </div>
+      <div class="pc-portions-bar collapsed" id="pcport-${key}">
+        <label>Multiply by</label>
+        <input type="number" class="pc-scale-inp" id="pcscale-${key}" value="1" min="0.5" step="0.5"
+          oninput="recalcPc('${key}',${ps.ingredients.length})">
+        <span style="font-size:12px;color:var(--text2)">× pre-save</span>
+      </div>
+    </div>`;
+  }).join('');
+  // auto-calc all
+  allPs.forEach(({ci,ri,si,psi,ps}) => recalcPc(`${ci}-${ri}-${si}-${psi}`, ps.ingredients.length));
+}
+function importPcPrices(key, ingsJson) {
+  const ings = typeof ingsJson === 'string' ? JSON.parse(ingsJson.split('&quot;').join('"')) : ingsJson;
+  ings.forEach((ing,ii) => {
+    const delPrice = getDeliveryPrice(ing.supplier, ing.product);
+    if (!delPrice) return;
+    const pricePerRecipeUnit = delPrice.pricePerUnit * convertUnits(1, ing.unit, delPrice.unit);
+    const inp = document.getElementById(`pcprice-${key}-${ii}`);
+    if (inp) { inp.value = pricePerRecipeUnit.toFixed(6); }
+  });
+  recalcPc(key, ings.length);
+}
+
+function recalcPc(key, ingCount) {
+  const mult = parseFloat(document.getElementById(`pcscale-${key}`)?.value) || 1;
+  let total = 0; let anyFilled = false;
+  for (let ii = 0; ii < ingCount; ii++) {
+    const qtyLbl = document.getElementById(`pcqty-${key}-${ii}`);
+    const inp    = document.getElementById(`pcprice-${key}-${ii}`);
+    const lineEl = document.getElementById(`pcline-${key}-${ii}`);
+    if (!inp) continue;
+    // get base qty from label text
+    const baseQtyStr = qtyLbl?.textContent?.split(' ')[0];
+    const baseQty = parseFloat(baseQtyStr) || 0;
+    const scaledQty = parseFloat((baseQty * mult).toFixed(4));
+    const unit = qtyLbl?.textContent?.split(' ')[1] || '';
+    if (qtyLbl) qtyLbl.textContent = (mult===1 ? baseQty : scaledQty) + ' ' + unit;
+    const priceVal = parseFloat(inp.value);
+    if (!isNaN(priceVal) && priceVal >= 0) {
+      const lineCost = priceVal * scaledQty;
+      total += lineCost; anyFilled = true;
+      if (lineEl) lineEl.innerHTML = `<span style="color:var(--sherwoodtan);font-weight:600">€${lineCost.toFixed(3)}</span>`;
+    } else {
+      if (lineEl) lineEl.textContent = '—';
+    }
+  }
+  const totalEl = document.getElementById(`pctotal-${key}`);
+  const perEl   = document.getElementById(`pcper-${key}`);
+  const subEl   = document.getElementById(`pcsub-${key}`);
+  if (totalEl) totalEl.textContent = anyFilled ? '€'+total.toFixed(2) : '—';
+  if (perEl)   perEl.textContent   = anyFilled ? '€'+(total/mult).toFixed(3) : '—';
+  if (subEl)   subEl.innerHTML     = mult===1 ? 'base quantities' : `Scaled &times;${mult}`;
+}
+
+function resetPcCard(key, ingCount) {
+  for (let ii = 0; ii < ingCount; ii++) {
+    const inp  = document.getElementById(`pcprice-${key}-${ii}`);
+    const line = document.getElementById(`pcline-${key}-${ii}`);
+    if (inp)  inp.value = '';
+    if (line) line.textContent = '—';
+  }
+  const inp = document.getElementById(`pcscale-${key}`);
+  if (inp) inp.value = 1;
+  const tot = document.getElementById(`pctotal-${key}`);
+  const per = document.getElementById(`pcper-${key}`);
+  const sub = document.getElementById(`pcsub-${key}`);
+  if (tot) tot.textContent = '—';
+  if (per) per.textContent = '—';
+  if (sub) sub.textContent = 'base quantities';
+}
+
+
+/* ══ EXPIRATION ══ */
+/* ══ LEFTOVERS ══ */
+function getLeftoverStatus(expires) {
+  const now     = new Date(); now.setHours(0,0,0,0);
+  const expDate = new Date(expires + 'T00:00:00');
+  const daysLeft = Math.ceil((expDate - now) / (1000*60*60*24));
+  if (daysLeft <= 0) return 'expired';
+  if (daysLeft <= 2) return 'soon';
+  return 'good';
+}
+function renderLeftovers() {
+  const list = document.getElementById('leftovers-list');
+  if (!list) return;
+  const search = (document.getElementById('leftover-search')?.value || '').toLowerCase();
+  let items = leftovers.map((l,i) => ({...l, _i:i, _status:getLeftoverStatus(l.expires), _days: Math.ceil((new Date(l.expires+'T00:00:00') - new Date()) / (1000*60*60*24))}));
+  if (search) items = items.filter(l => l.name.toLowerCase().includes(search) || (l.recipeContext||'').toLowerCase().includes(search));
+  const order = {expired:0, soon:1, good:2};
+  items.sort((a,b) => order[a._status]!==order[b._status] ? order[a._status]-order[b._status] : a._days-b._days);
+  if (!items.length) { list.innerHTML='<div class="empty">No leftovers yet.</div>'; return; }
+  const statusLabel = {good:'Good', soon:'Close to date', expired:'Expired'};
+  const statusClass = {good:'b-green', soon:'b-amber', expired:'b-red'};
+  const borderCol   = {good:'var(--raindance)', soon:'var(--sherwoodtan)', expired:'var(--southwestpottery)'};
+  list.innerHTML = items.map(l => `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${borderCol[l._status]};border-radius:10px;margin-bottom:8px;overflow:hidden">
+      <div style="padding:13px 16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:2px">${l.name}</div>
+            ${l.recipeContext?`<div style="font-size:11px;color:var(--text3)">${l.recipeContext}</div>`:''}
+          </div>
+          <span class="badge ${statusClass[l._status]}" style="flex-shrink:0">${statusLabel[l._status]}</span>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:10px">
+          <span>Made: <strong>${fmtDate(l.madeDate||l.addedDate)}</strong></span>
+          <span>Expires: <strong>${fmtDate(l.expires)}</strong></span>
+          <span>${l._days<=0?`<span style="color:var(--southwestpottery)">${Math.abs(l._days)} day${Math.abs(l._days)!==1?'s':''} overdue</span>`:`${l._days} day${l._days!==1?'s':''} left`}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="sr-control">
+            <input type="number" value="${l.qty}" min="0" step="1"
+              style="width:72px;padding:5px 8px;font-size:13px;text-align:right;background:var(--bg3);border:1px solid var(--border2);border-radius:6px 0 0 6px;color:var(--text)"
+              onchange="updateLeftoverQty(${l._i},this.value)">
+            <span class="sr-unit">${l.unit}</span>
+          </div>
+          <div class="sr-control">
+            <input type="date" value="${l.expires}"
+              style="padding:5px 8px;font-size:12px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text)"
+              onchange="updateLeftoverExpiry(${l._i},this.value)">
+          </div>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            ${l._status==='expired' ? `<button class="btn btn-sm" style="font-size:11px;color:var(--southwestpottery);border-color:var(--southwestpottery)" onclick="disposeLeftover(${l._i})">Disposed</button>` : ''}
+            <button class="btn btn-sm" style="color:var(--raindance);border-color:var(--raindance)" onclick="markLeftoverUsed(${l._i})">
+              <span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Used</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function updateLeftoverQty(i, val) { if(leftovers[i]) { leftovers[i].qty=parseFloat(val)||0; persist(); } }
+function updateLeftoverExpiry(i, val) { if(leftovers[i]&&val) { leftovers[i].expires=val; persist(); renderLeftovers(); } }
+function markLeftoverUsed(i) { if(!confirm('Mark as used and remove?')) return; leftovers.splice(i,1); persist(); renderLeftovers(); }
+function disposeLeftover(i) { if(!confirm('Mark as disposed and remove?')) return; leftovers.splice(i,1); persist(); renderLeftovers(); }
+/* init */
+syncStorage();renderSuppliers();renderRecipes();
+document.getElementById('view-date').value=todayStr();
+document.getElementById('del-date').value=todayStr();
+</script>
+</body>
+</html>
 
