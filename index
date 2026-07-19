@@ -57,6 +57,7 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--bg
 label{font-size:11px;color:var(--text3);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
 input,select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:10px;font-size:13px;background:var(--bg3);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit}
 input:focus,select:focus{border-color:var(--sherwoodtan);box-shadow:0 0 0 3px rgba(184,154,118,0.12)}
+textarea{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:inherit}
 input::placeholder{color:var(--text3)}
 select option{background:var(--bg3)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
@@ -73,11 +74,13 @@ select option{background:var(--bg3)}
 .icon-btn:hover.del{color:var(--red);background:var(--red-bg)}
 .icon-btn:hover.edit{color:var(--blue);background:var(--blue-bg)}
 .icon-btn:hover.move{color:var(--blue);background:var(--blue-bg)}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:transparent}
+table tr{background:transparent}
+table td,table th{background:transparent}
 th{text-align:left;font-size:10px;color:var(--text3);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 td{padding:8px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.018)}
+tr:hover td{background:var(--bg3)}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.02em}
 .b-blue{background:rgba(63,79,83,0.3);color:var(--raindance);border:1px solid var(--narragansett)}
 .b-green{background:rgba(163,179,168,0.15);color:var(--raindance);border:1px solid var(--raindance)}
@@ -293,6 +296,7 @@ hr{border:none;border-top:1px solid var(--border);margin:14px 0;opacity:0.5}
 .ps-action-bar{display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;background:var(--bg4);border-radius:8px;flex-wrap:wrap}
 
 /* date input styling */
+input[type=date]{background:var(--bg3);color:var(--text)}
 input[type=date]{cursor:pointer;color-scheme:dark}
 input[type=date]::-webkit-calendar-picker-indicator{
   filter:invert(0.6) sepia(0.3) hue-rotate(340deg) saturate(0.8);
@@ -402,7 +406,7 @@ td{font-family:'Inter',sans-serif}
           <option value="">— select supplier —</option>
         </select>
       </div>
-      <div><label>Delivery date</label><input type="date" id="del-date"></div>
+      <div><label>Delivery date</label><input type="date" id="del-date" style="background:var(--bg3);color:var(--text);border-color:var(--border2)"></div>
       <div><label>Document / invoice no.</label><input id="del-docno" placeholder="e.g. INV-2024-001"></div>
       <div>
         <label>Default VAT %</label>
@@ -474,7 +478,7 @@ td{font-family:'Inter',sans-serif}
 <div class="pane" id="pane-today">
   <div class="card">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="flex:1;min-width:160px"><label>View date</label><input type="date" id="view-date" oninput="onDateChange()"></div>
+      <div style="flex:1;min-width:160px"><label>View date</label><input type="date" id="view-date" oninput="onDateChange()" style="background:var(--bg3);color:var(--text);border-color:var(--border2)"></div>
       <div style="font-size:13px;color:var(--text2)" id="day-summary"></div>
     </div>
   </div>
@@ -811,7 +815,7 @@ function renderSuppliers() {
             ${s.products.map((p,pi)=>`
               <tr id="ptr-${si}-${pi}">
                 <td style="font-weight:600">${p.name}</td>
-                <td><span class="badge b-amber">${p.unit}</span></td>
+                <td><span class="badge b-grey">${p.unit}</span></td>
                 <td style="text-align:right;display:flex;gap:4px;justify-content:flex-end">
                   <button class="icon-btn edit" onclick="startEditProduct(${si},${pi})" title="Edit"><span class="ic"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M8.5 1.5l2 2L4 10l-2.5.5L2 8z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span></button>
                   <button class="icon-btn del"  onclick="deleteProduct(${si},${pi})"    title="Delete"><span class="ic"><svg width="11" height="11" viewBox="0 0 12 12"><line x1="2" y1="2" x2="10" y2="10" stroke="currentColor" stroke-width="1.8"/><line x1="10" y1="2" x2="2" y2="10" stroke="currentColor" stroke-width="1.8"/></svg></span></button>
@@ -1064,7 +1068,7 @@ function renderDeliveryLog() {
               <tr>
                 <td style="font-weight:600">${it.product}</td>
                 <td>${it.qty}</td>
-                <td><span class="badge b-amber" style="font-size:11px">${it.unit}</span></td>
+                <td><span class="badge b-grey" style="font-size:11px">${it.unit}</span></td>
                 <td style="color:var(--text2)">${(it.priceFixed??it.priceExcl)!=null?fmtMoney(it.priceFixed??it.priceExcl):'—'}</td>
                 <td><span class="badge b-grey">${it.vat}%</span></td>
                 <td style="color:var(--green);font-weight:600">${(it.priceAfter??it.priceIncl)!=null?'€'+(it.priceAfter??it.priceIncl).toFixed(3):'—'}</td>
